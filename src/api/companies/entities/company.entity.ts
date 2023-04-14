@@ -3,13 +3,14 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity, JoinColumn,
-  ManyToOne,
+  ManyToOne, OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Country } from '../../countries/entities/country.entity';
 import { User } from '../../users/entities/user.entity';
+import { OrgStructure } from '../../org-structures/entities/org-structure.entity';
 
 
 @Entity('companies', { synchronize: false })
@@ -125,6 +126,9 @@ export class Company {
   @ApiProperty()
   @Column()
   deactivatedAt: Date;
+
+  @OneToOne(() => OrgStructure, (orgStructure) => orgStructure.company)
+  orgStructure: OrgStructure;
 
   @ApiProperty()
   @CreateDateColumn()

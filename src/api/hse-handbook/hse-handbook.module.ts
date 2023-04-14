@@ -12,13 +12,15 @@ import { AssignedHseRoutine } from '../assigned-hse-routines/entities/assigned-h
 import { HseHandbookAssignedRoutine } from './entities/hse-handbook-assigned-routine.entity';
 import { HseHandbookAssignedRoutineTranslation } from './entities/hse-handbook-assigned-routine-translation.entity';
 import { HseHandbookSignaturesModule } from '../hse-handbook-signatures/hse-handbook-signatures.module';
+import { OrgStructuresModule } from '../org-structures/org-structures.module';
+import { HseHandbookOrgStructure } from './entities/hse-handbook-org-structure.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
     User, Company, AssignedHseRisk, AssignedHseRoutine, HseHandbook,
     HseHandbookAssignedRisk, HseHandbookAssignedRiskTranslation,
-    HseHandbookAssignedRoutine, HseHandbookAssignedRoutineTranslation
-  ]), HseHandbookSignaturesModule],
+    HseHandbookAssignedRoutine, HseHandbookAssignedRoutineTranslation, HseHandbookOrgStructure
+  ]), HseHandbookSignaturesModule, OrgStructuresModule],
   controllers: [HseHandbookController],
   providers: [HseHandbookService]
 })

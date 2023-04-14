@@ -4,7 +4,7 @@ import { Status } from '../../statuses/entities/status.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Company } from '../../companies/entities/company.entity';
 import { HseHandbookSignature } from '../../hse-handbook-signatures/entities/hse-handbook-signature.entity';
-import { Position } from './position.entity';
+import { Position } from '../../positions/entities/position.entity';
 
 
 @Entity('users', { synchronize: false })

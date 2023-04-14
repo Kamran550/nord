@@ -1,12 +1,12 @@
-import { DataSource, EntityTarget, ILike, In, Repository } from "typeorm";
-import { FindOneOptions } from "typeorm/find-options/FindOneOptions";
-import { FindManyOptions } from "typeorm/find-options/FindManyOptions";
-import { PaginationParams } from "./pagination.pipe";
-import calcTakeAndSkip from "./calc-take-and-skip";
-import parseTranslatedObjects from "./parse-translated-objects";
-import { ILangOptions } from "../types";
-import { FilterParams } from "./filter.pipe";
-import applyLanguageFromTranslation from "./apply-language-from-translations";
+import { DataSource, EntityTarget, ILike, In, Repository } from 'typeorm';
+import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
+import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
+import { PaginationParams } from './pagination.pipe';
+import calcTakeAndSkip from './calc-take-and-skip';
+import parseTranslatedObjects from './parse-translated-objects';
+import { ILangOptions } from '../types';
+import { FilterParams } from './filter.pipe';
+import applyLanguageFromTranslation from './apply-language-from-translations';
 
 type SearchParam = {
   keys: string[];
@@ -64,18 +64,18 @@ const addLangFindOptions = (
   }: { lang: string; search?: SearchParam; hasTranslations?: boolean }
 ) => {
   // Add 'translations' relation if needed
-  if (hasTranslations || lang !== "lt") {
+  if (hasTranslations || lang !== 'lt') {
     if (
       Array.isArray(options.relations) &&
-      !options.relations.includes("translations")
+      !options.relations.includes('translations')
     ) {
-      options.relations.push("translations");
+      options.relations.push('translations');
     } else if (!options.relations) {
-      options.relations = ["translations"];
+      options.relations = ['translations'];
     }
   }
 
-  if (lang !== "lt" && !hasTranslations) {
+  if (lang !== 'lt' && !hasTranslations) {
     if (!options.where) options.where = {};
     options.where.translations = { locale: lang };
   }
@@ -85,7 +85,7 @@ const addLangFindOptions = (
     if (!options.where) options.where = {};
 
     const currentWhere = { ...options.where };
-    if (lang === "lt") {
+    if (lang === 'lt') {
       options.where = search.keys.map((key) => ({
         ...currentWhere,
         [key]: ILike(`%${search.value}%`),
@@ -111,7 +111,7 @@ const addFiltersOptions = (options: any, filters = {}) => {
   if (!options.where) options.where = {};
   filterEntries.forEach(
     ([key, value]: [string, { condition: string; value: any }]) => {
-      if (value?.condition === "equals") options.where[key] = value?.value;
+      if (value?.condition === 'equals') options.where[key] = value?.value;
     }
   );
 
@@ -143,7 +143,7 @@ export class RepositoryWithLang<
     options: ILangOptions & { relationKey: string }
   ) {
     const { ltEntity, translates } = parseTranslatedObjects(createDto);
-    console.log("OPTIONS:", options);
+    console.log('OPTIONS:', options);
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();

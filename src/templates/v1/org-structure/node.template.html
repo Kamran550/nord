@@ -1,0 +1,24 @@
+<div class="node">
+  {{#if data.isGroup}}
+  <div class="node-label">
+    <div class="node-label-header">{{data.title}}</div>
+    <span>{{data.persons}}</span>
+  </div>
+  {{else}}
+  <div class="node-label">
+    <span><b>{{data.position}}</b></span>
+    <span>{{data.company}}</span>
+    <span>{{data.name}}</span>
+    <span>{{data.competence}}</span>
+    <span>{{data.contactDetails}}</span>
+  </div>
+  {{/if}}
+
+  {{#if children}}
+  <div class="node-children">
+    {{#each children}}
+    {{> node node=this}}
+    {{/each}}
+  </div>
+  {{/if}}
+</div>

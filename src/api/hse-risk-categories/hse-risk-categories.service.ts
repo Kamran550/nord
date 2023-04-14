@@ -1,16 +1,11 @@
-import { ConflictException, Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
-import { CreateHseRiskCategoryDto } from "./dto/create-hse-risk-category.dto";
-import { UpdateHseRiskCategoryDto } from "./dto/update-hse-risk-category.dto";
-import {
-  FindWithLangOptions,
-  RepositoryWithLang,
-} from "../../helpers/repository-with-lang";
-import { HseRiskCategory } from "./entities/hse-risk-category.entity";
-import { HseRiskCategoryTranslation } from "./entities/hse-risk-categories-translations.entity";
-import { IFindOptions, ILangOptions } from "../../types";
-import { HttpErrorByCode } from "@nestjs/common/utils/http-error-by-code.util";
-import { log } from "console";
+import { ConflictException, Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { CreateHseRiskCategoryDto } from './dto/create-hse-risk-category.dto';
+import { UpdateHseRiskCategoryDto } from './dto/update-hse-risk-category.dto';
+import { FindWithLangOptions, RepositoryWithLang } from '../../helpers/repository-with-lang';
+import { HseRiskCategory } from './entities/hse-risk-category.entity';
+import { HseRiskCategoryTranslation } from './entities/hse-risk-categories-translations.entity';
+import { IFindOptions, ILangOptions } from '../../types';
 
 @Injectable()
 export class HseRiskCategoriesService {
@@ -31,19 +26,18 @@ export class HseRiskCategoriesService {
     createHseRiskCategoryDto: CreateHseRiskCategoryDto,
     options: ILangOptions
   ) {
-    try{
+    try {
       const result = await this.hseRiskCategoriesRepository.createWithLang<CreateHseRiskCategoryDto>(
         createHseRiskCategoryDto,
-        { ...options, relationKey: "hseRiskCategory" }
+        { ...options, relationKey: 'hseRiskCategory' }
       );
-      return result
-    }catch(err){
-      if(err.errno === 1062){   
-        throw new ConflictException("Already exist category name");
-       }
-       throw err;
+      return result;
+    } catch (err) {
+      if (err.errno === 1062) {
+        throw new ConflictException('Already exist category name');
+      }
+      throw err;
     }
-  
   }
 
   async findAll(options: IFindOptions) {
@@ -52,7 +46,7 @@ export class HseRiskCategoriesService {
       pagination: options.pagination,
     };
     if (options.search)
-      findOptions.search = { keys: ["name"], value: options.search };
+      findOptions.search = { keys: ['name'], value: options.search };
 
     return this.hseRiskCategoriesRepository.findAndCountWithLang(findOptions);
   }
@@ -78,7 +72,7 @@ export class HseRiskCategoriesService {
     return this.hseRiskCategoriesRepository.updateWithLang<UpdateHseRiskCategoryDto>(
       target,
       updateHseRiskCategoryDto,
-      { ...options, relationKey: "hseRiskCategory" }
+      { ...options, relationKey: 'hseRiskCategory' }
     );
   }
 

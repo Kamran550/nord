@@ -36,8 +36,6 @@ export class HseRiskCategoriesController {
     @UserAndLang() { lang },
     @Body() createHseRiskCategoryDto: CreateHseRiskCategoryDto
   ) {
-    console.log('CONT LANG:',lang);
-    
     return this.hseRiskCategoriesService.create(createHseRiskCategoryDto, { lang });
   }
 

@@ -21,6 +21,8 @@ import { HseHandbookModule } from './api/hse-handbook/hse-handbook.module';
 import { CountriesModule } from './api/countries/countries.module';
 import { HseHandbookSignaturesModule } from './api/hse-handbook-signatures/hse-handbook-signatures.module';
 import { StatusesModule } from './api/statuses/statuses.module';
+import { PositionsModule } from './api/positions/positions.module';
+import { OrgStructuresModule } from './api/org-structures/org-structures.module';
 
 
 @Module({
@@ -48,7 +50,9 @@ import { StatusesModule } from './api/statuses/statuses.module';
     HseHandbookModule,
     CountriesModule,
     HseHandbookSignaturesModule,
-    StatusesModule
+    StatusesModule,
+    PositionsModule,
+    OrgStructuresModule
   ],
   controllers: [AppController],
 })

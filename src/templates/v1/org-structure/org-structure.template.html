@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <style>
+        .node-tree {
+            display: table;
+        }
+        .node {
+            display: table-cell;
+            text-align: center;
+            vertical-align: top;
+            position: relative;
+            padding-left: 8px;
+            padding-right: 8px;
+            font-size: 12px;
+            line-height: 14px;
+        }
+        .node-label {
+            display: inline-block;
+            width: 150px;
+            border: 1px solid rgb(22, 56, 216);
+            text-align: center;
+            min-height: 50px;
+            padding: 2px;
+            position: relative;
+            user-select: none;
+        }
+        .node-label span {
+            display: block;
+            text-align: center;
+        }
+        .node-label-header {
+            background-color: rgb(22, 56, 216);
+            color: white;
+            margin-left: -2px;
+            margin-top: -2px;
+            margin-right: -2px;
+        }
+
+        .node-children {
+            display: table;
+            padding-top: 16px;
+            position: relative;
+            margin-left: -8px;
+            margin-right: -8px;
+        }
+        .node-children:before {
+            content: '';
+            display: block;
+            height: 16px;
+            width: 50%;
+            border-right: 1px solid rgb(22, 56, 216);
+            position: absolute;
+            left: 1px;
+            top: 0;
+        }
+
+        .node-children .node {
+            padding-top: 16px;
+        }
+        .node-children .node:before, .node-children .node:after {
+            content: '';
+            display: block;
+            width: 50%;
+            height: 16px;
+            position: absolute;
+            top: 0;
+            border-top: 1px solid rgb(22, 56, 216);
+        }
+        .node-children .node:before {
+            left: 0;
+        }
+        .node-children .node:after {
+            left: 50%;
+            border-left: 1px solid rgb(22, 56, 216);
+        }
+        .node-children .node:first-child:before {
+            border-top: none;
+        }
+        .node-children .node:last-child:after {
+            border-top: none;
+        }
+    </style>
+
+    <div style="text-align: center">
+      <div style="display: inline-block">
+        <div class="node-tree">
+          {{> node node=this}}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

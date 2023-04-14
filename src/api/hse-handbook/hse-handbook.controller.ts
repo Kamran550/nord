@@ -16,20 +16,20 @@ export class HseHandbookController {
 
   @Post('print-new-version')
   printNewPdf(
-    @UserAndLang() { user },
+    @UserAndLang() { user, lang },
     @Res() res: Response,
     @Body() data: any
   ) {
-    return this.hseHandbookService.getPdfForNewVersion(res, { user, params: data });
+    return this.hseHandbookService.getPdfForNewVersion(res, { user, params: data, lang });
   }
 
   @Post('print')
   printPdf(
-    @UserAndLang() { user },
+    @UserAndLang() { user, lang },
     @Res() res: Response,
     @Body() data: any
   ) {
-    return this.hseHandbookService.getPdfForExistingVersion(res, { user, params: data });
+    return this.hseHandbookService.getPdfForExistingVersion(res, { user, params: data, lang });
   }
 
   @Get('has-new-version')

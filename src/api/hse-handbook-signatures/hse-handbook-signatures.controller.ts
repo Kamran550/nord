@@ -38,7 +38,7 @@ export class HseHandbookSignaturesController {
     @UploadedFile() file: Express.Multer.File,
     @Param('id') id: string
   ) {
-    return this.hseHandbookSignaturesService.sign(id, file)
+    return this.hseHandbookSignaturesService.sign(id, file);
   }
 
   @Get()

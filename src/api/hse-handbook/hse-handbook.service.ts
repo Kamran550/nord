@@ -26,6 +26,8 @@ import { AssignedHseRoutine } from '../assigned-hse-routines/entities/assigned-h
 import { HseHandbookAssignedRoutine } from './entities/hse-handbook-assigned-routine.entity';
 import { HseHandbookAssignedRoutineTranslation } from './entities/hse-handbook-assigned-routine-translation.entity';
 import { HseHandbookSignaturesService } from '../hse-handbook-signatures/hse-handbook-signatures.service';
+import { OrgStructuresService } from '../org-structures/org-structures.service';
+import { HseHandbookOrgStructure } from './entities/hse-handbook-org-structure.entity';
 
 wkhtmltopdf.command = process.env.WKHTMLTOPDF_PATH;
 wkhtmltopdf.shell = process.env.WKHTMLTOPDF_SH || wkhtmltopdf.shell;
@@ -58,10 +60,13 @@ export class HseHandbookService {
     private hseHandbookAssignedRisksRepository: Repository<HseHandbookAssignedRisk>,
     @InjectRepository(HseHandbookAssignedRoutine)
     private hseHandbookAssignedRoutinesRepository: Repository<HseHandbookAssignedRoutine>,
-    private hseHandbookSignaturesService: HseHandbookSignaturesService
+    @InjectRepository(HseHandbookOrgStructure)
+    private hseHandbookOrgStructuresRepository: Repository<HseHandbookOrgStructure>,
+    private hseHandbookSignaturesService: HseHandbookSignaturesService,
+    private orgStructureService: OrgStructuresService
   ) {}
 
-  async getPdfForNewVersion(res: Response, { user, params }: { user: User; params?: any }) {
+  async getPdfForNewVersion(res: Response, { user, params, lang }: { user: User; params?: any, lang: string }) {
     const company = await this.companyRepository.findOne({
       where: { uuid: user.company.uuid },
       relations: ['country', 'hseCeoUser']
@@ -77,6 +82,7 @@ export class HseHandbookService {
       relations: ['responsibleUser', 'revisedByPerson']
     });
     const lastChangesInfo = await this.isNewVersionAvailable(user);
+    const orgStructure = await this.orgStructureService.findOne(user.companyUuid);
 
     const printData = {
       company_name: company?.name,
@@ -121,6 +127,7 @@ export class HseHandbookService {
         responsible_user: routine.responsibleUser?.fullName,
         content: routine.content
       })),
+      orgStructure: this.orgStructureService.getOrgStructureHtml(orgStructure, lang),
       isEjectSafety: params.safety === 'eject',
       isAgreementNotToHave: params.safety === 'agreement-not-to-have',
       isHseDeclarationVisible: true,
@@ -136,7 +143,7 @@ export class HseHandbookService {
     return this.getPdf(res, printData);
   }
 
-  async getPdfForExistingVersion(res: Response, { user, params }: { user: User; params?: any }) {
+  async getPdfForExistingVersion(res: Response, { user, params, lang }: { user: User; params?: any, lang: string }) {
     const hseHandbook = await this.hseHandbooksRepository.findOne({
       where: { uuid: params.hseHandbookUuid },
       relations: ['safetyRepresentative', 'createdBy', 'lastRevisedBy']
@@ -161,6 +168,7 @@ export class HseHandbookService {
       where: { hseHandbookUuid: hseHandbook.uuid },
       relations: ['responsibleUser', 'lastRevisedBy']
     });
+    const orgStructure = await this.hseHandbookOrgStructuresRepository.findOneBy({ hseHandbookUuid: hseHandbook.uuid });
 
 
     const printData = {
@@ -206,6 +214,7 @@ export class HseHandbookService {
         responsible_user: routine.responsibleUser?.fullName,
         content: routine.content
       })),
+      orgStructure: orgStructure ? this.orgStructureService.getOrgStructureHtml(orgStructure, lang) : '-',
       isEjectSafety: hseHandbook.safetyType === 'eject',
       isAgreementNotToHave: hseHandbook.safetyType === 'agreement-not-to-have',
       isHseDeclarationVisible: params.isHseDeclarationVisible || !('isHseDeclarationVisible' in params),
@@ -232,6 +241,7 @@ export class HseHandbookService {
       where: { uuid: user.company.uuid },
       relations: ['country', 'hseCeoUser']
     });
+    const employeesCount = await this.usersRepository.count({ where: { companyUuid: user.company.uuid, statusUuid: 'user.active' } });
     const risks = await this.risksRepository.find({
       where: { companyUuid: user.company.uuid },
       relations: [
@@ -252,6 +262,7 @@ export class HseHandbookService {
         'companyHseRoutineCategory.translations'
       ]
     });
+    const orgStructure = await this.orgStructureService.findOne(user.companyUuid);
     const companyInfo = {
       name: company?.name,
       companyCode: company?.companyCode,
@@ -263,6 +274,7 @@ export class HseHandbookService {
       website: company?.website,
       hseCeoUser: company.hseCeoUser?.fullName,
       hseCeoUserUuid: company.hseCeoUser?.uuid,
+      employeesCount: employeesCount
     };
     const lastChangesInfo = await this.isNewVersionAvailable(user);
 
@@ -355,6 +367,16 @@ export class HseHandbookService {
         }
       }
 
+      // Save Org Structure
+      const orgStructureEntity = await queryRunner.manager.create(HseHandbookOrgStructure, {
+        companyUuid: orgStructure.companyUuid,
+        hseHandbookUuid: hseHandbook.uuid,
+        lastRevisedByUuid: orgStructure.lastRevisedByUuid,
+        lastRevisedAt: orgStructure.updatedAt,
+        structure: orgStructure.structure,
+      });
+      await queryRunner.manager.save(orgStructureEntity);
+
       await queryRunner.commitTransaction();
 
       // Send to all active users
@@ -405,6 +427,9 @@ export class HseHandbookService {
       order: { createdAt: 'DESC' },
       relations: ['risks', 'routines']
     });
+    const hseHandbookOrgStructure = lastHandbook ? await this.hseHandbookOrgStructuresRepository.findOneBy({
+      hseHandbookUuid: lastHandbook.uuid
+    }) : null;
 
     const storeChangesInfo = (changesByUser: User, changesAt: Date) => {
       if (new Date(changesAt) > lastChangeAt) {
@@ -445,6 +470,12 @@ export class HseHandbookService {
     });
     if (dbRoutines.length !== lastHandbook?.routines.length) {
       newVersionAvailable = true;
+    }
+
+    // Comparing org structure
+    const dbOrgStructure = await this.orgStructureService.findOne(user.companyUuid, true);
+    if (!hseHandbookOrgStructure || (dbOrgStructure?.updatedAt > hseHandbookOrgStructure?.lastRevisedAt)) {
+      storeChangesInfo(dbOrgStructure.lastRevisedBy, dbOrgStructure.updatedAt);
     }
 
     const wasHseCeoChanged = (lastHandbook?.companyInfo as Company)?.hseCeoUserUuid !== user.company.hseCeoUserUuid;

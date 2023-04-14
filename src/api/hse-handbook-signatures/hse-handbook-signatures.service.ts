@@ -46,10 +46,10 @@ export class HseHandbookSignaturesService {
     file: Express.Multer.File
   ) {
     try {
-      const key = `${file.fieldname}${Date.now()}`
-      const url = await this.s3Service.uploadFile(file, key)
-      const dataToUpdate: Partial<HseHandbookSignature> = { signature: url, status: HseHandbookSignatureStatus.Signed }
-      const sign_handbook = await this.hseHandbookSignaturesRepository.update({ uuid: id }, dataToUpdate)
+      const key = `${file.fieldname}${Date.now()}`;
+      const url = await this.s3Service.uploadFile(file, key);
+      const dataToUpdate: Partial<HseHandbookSignature> = { signature: url, status: HseHandbookSignatureStatus.Signed };
+      const sign_handbook = await this.hseHandbookSignaturesRepository.update({ uuid: id }, dataToUpdate);
     } catch (err) {
       throw err;
     }

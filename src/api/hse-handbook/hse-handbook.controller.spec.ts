@@ -11,6 +11,8 @@ import { HseHandbook } from './entities/hse-handbook.entity';
 import { HseHandbookAssignedRisk } from './entities/hse-handbook-assigned-risk.entity';
 import { HseHandbookAssignedRoutine } from './entities/hse-handbook-assigned-routine.entity';
 import { HseHandbookSignaturesService } from '../hse-handbook-signatures/hse-handbook-signatures.service';
+import { HseHandbookOrgStructure } from './entities/hse-handbook-org-structure.entity';
+import { OrgStructuresService } from '../org-structures/org-structures.service';
 
 describe('HseHandbookController', () => {
   let controller: HseHandbookController;
@@ -45,8 +47,14 @@ describe('HseHandbookController', () => {
           provide: getRepositoryToken(HseHandbookAssignedRoutine),
           useValue: jest.fn()
         }, {
+          provide: getRepositoryToken(HseHandbookOrgStructure),
+          useValue: jest.fn()
+        }, {
           provide: HseHandbookSignaturesService,
           useFactory: () => ({ send: jest.fn() })
+        }, {
+          provide: OrgStructuresService,
+          useFactory: () => ({ findOne: jest.fn() })
         }
       ],
     }).compile();

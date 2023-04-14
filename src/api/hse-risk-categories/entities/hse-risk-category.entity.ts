@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
@@ -7,13 +7,13 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { HseRiskCategoryTranslation } from "./hse-risk-categories-translations.entity";
+} from 'typeorm';
+import { HseRiskCategoryTranslation } from './hse-risk-categories-translations.entity';
 
-@Entity("hse_risk_categories")
+@Entity('hse_risk_categories')
 export class HseRiskCategory {
   @ApiProperty()
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
   @ApiProperty()
