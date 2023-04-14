@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style rel="stylesheet">
+        .mt-1 {
+            margin-top: 8px;
+        }
+
+        .mt-2 {
+            margin-top: 16px;
+        }
+
+        .mb-1 {
+            margin-bottom: 8px;
+        }
+
+        .mb-2 {
+            margin-bottom: 16px;
+        }
+
+        .mv-1 {
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        .mv-2 {
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+        .cell-border {
+            border: 1px solid black
+        }
+
+        .vertical-th-content {
+            display: inline-block;
+            -webkit-backface-visibility: hidden;
+            -webkit-transform-origin: center;
+            -webkit-transform: translate(-50%, -50%) rotate(-90deg);
+            white-space: nowrap;
+            position: absolute;
+            top: 50%;
+            left: 14px;
+        }
+
+        p, ul {
+            margin-top: 0;
+            margin-bottom: 0
+        }
+
+        .new-page {
+            page-break-before: always;
+        }
+
+        .table-header {
+            background-color: rgb(240, 240, 240);
+        }
+
+        td, th {
+            padding: 6px 10px;
+            text-align: left;
+            position: relative;
+        }
+
+        th {
+            font-weight: bold;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot.red {
+            background-color: rgb(255,0,0);
+        }
+        .dot.yellow {
+            background-color: rgb(255,255,0);
+        }
+        .dot.green {
+            background-color: rgb(131,204,72);
+        }
+    </style>
+
+  </head>
+  <body>
+    <div style="text-align: center; padding-top: 100px">
+      <h1 style="font-weight: bold">
+        {{company_name}} HSE HANDBOOK
+      </h1>
+      <p style="font-weight: bold; font-size: 16px; margin-bottom: 16px">Systematic work with the internal control system</p>
+      <p style="font-weight: normal">Handbook's version {{handbook_version}}: {{handbook_creation_date}}</p>
+    </div>
+
+    <!--    Decision on Safety Representative-->
+    {{#if isSafetyVisible}}
+    <h2 class="new-page">Decision on Safety Representative</h2>
+
+    {{#if isEjectSafety}}
+    <div>
+      <h3>Election of safety representative</h3>
+
+      <p style="margin-bottom: 16px;">Section 6-1 of the Working Environment Act states that safety representatives shall be elected at all undertakings subject to this Act.</p>
+
+      <p>Our company has elected:</p>
+      <table style="border-collapse: collapse; width: 60%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr>
+            <td>{{representative_fullname}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="mb-2">
+        as a safety representative to safeguard the interests of employees in terms of health, environment and safety (HSE).
+        <br/>
+        The safety representative is elected for two years at a time. The safety representative is enrolled in a compulsory working environment course at Nord HMS AS.
+      </p>
+
+      {{#if showSignatures}}
+      <p class="mb-2">Signatures of employees:</p>
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr>
+            <th style="width: 40%;">Name, surname:</th>
+            <th style="width: 30%;">Signature:</th>
+            <th style="width: 30%;">Date:</th>
+          </tr>
+          <tr>
+            <td style="width: 40%;">[Name of the user]</td>
+            <td style="width: 30%;">_[Signature]_</td>
+            <td style="width: 30%;">_[Signing date, time]_</td>
+          </tr>
+        </tbody>
+      </table>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{#if isAgreementNotToHave}}
+    <div>
+      <h3>Safety Representative - Agreement on a Different Arrangement</h3>
+
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr class="table-header">
+            <td>1. This agreement is concluded between the employer and all employees.</td>
+          </tr>
+          <tr>
+            <td>
+              Company name:<br />
+              {{company_name}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr class="table-header">
+            <td>2. Number of employees</td>
+          </tr>
+          <tr>
+            <td>
+              Number of employees (permanent employees, full-time and part-time, temporary employees and hired employees):<br />
+              {{number_of_employees}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr class="table-header">
+            <td>3. The agreement means that no safety representative arrangement is established in the undertaking, as
+              there is provision under the Working Environment Act § 6-1 (1) for companies with less than ten employees
+              in total.
+              The agreement must ensure that the employees are consulted on matters relating to the working environment.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr class="table-header">
+            <td>4. The agreement implies that the employer and the employees cooperate regularly and when necessary on
+              the protection service in the day-to-day operations.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Measures (see guidance below):<br />
+              [Add text on measures]
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr class="table-header">
+            <td>5. The agreement is valid for two years.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr>
+            <th style="width: 40%;">Employees' representative - name, surname:</th>
+            <th style="width: 30%;">Signature:</th>
+            <th style="width: 30%;">Date:</th>
+          </tr>
+          <tr>
+            <td style="width: 40%;">{{representative_fullname}}</td>
+            <td style="width: 30%;">_[Signature]_</td>
+            <td style="width: 30%;">_[Signing date, time]_</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr>
+            <th style="width: 40%;">On behalf of the employer – name, surname:</th>
+            <th style="width: 30%;">Signature:</th>
+            <th style="width: 30%;">Date:</th>
+          </tr>
+          <tr>
+            <td style="width: 40%;">{{ceo_fullname}}</td>
+            <td style="width: 30%;">_[Signature]_</td>
+            <td style="width: 30%;">_[Signing date, time]_</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {{#if showSignatures}}
+      <p>Signatures of all employees:</p>
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr>
+            <th style="width: 40%;">Name, surname:</th>
+            <th style="width: 30%;">Signature:</th>
+            <th style="width: 30%;">Date:</th>
+          </tr>
+          <tr>
+            <td style="width: 40%;">[Name of the user]</td>
+            <td style="width: 30%;">_[Signature]_</td>
+            <td style="width: 30%;">_[Signing date, time]_</td>
+          </tr>
+        </tbody>
+      </table>
+      {{/if}}
+
+      <p style="font-size: 12px">
+        As a general rule, safety representatives must be elected in all undertakings. If the business has less than 10
+        employees, the employer and employees can agree on another arrangement. All employees must be counted, including
+        permanent employees (full-time and part-time), temporary employees and hired employees. Such an agreement must
+        be in writing and contain a description of how the safety work is to be carried out specifically. Examples of
+        what the agreement must contain: necessary working environment measures, meeting point, how safety issues are
+        raised, how risk conditions are handled, employer's duties, employees' duty to cooperate, etc.
+        <br /><br />
+        The agreement period must be a maximum of two years and the agreement must contain who is the employees'
+        representative or contact person. If the undertaking enters into an agreement on a different arrangement, all
+        employees must sign the agreement. The employer must ensure that all employees have received the necessary
+        training and information about the safety work. If the undertaking changes the number of employees so that they
+        become 10 employees or more during the agreement period, a safety representative must be elected. The Norwegian
+        Labor Inspection Authority can, by inspection and based on an assessment of risk conditions, order undertakings
+        with less than 10 employees to elect a safety representative.
+        <br /><br />
+        <a href="https://www.arbeidstilsynet.no/verneombud" target="_blank">www.arbeidstilsynet.no/verneombud</a>
+      </p>
+    </div>
+    {{/if}}
+    {{/if}}
+
+    <!--    HSE Declaration-->
+    {{#if isHseDeclarationVisible}}
+    <h2 class="new-page">HSE Declaration</h2>
+    <div>
+      <h3>Declaration on health, safety and environment (HSE)</h3>
+      <p style="margin-bottom: 16px;">This declaration concerns:</p>
+
+      <div>
+        <span style="width: 200px; display: inline-block">Name of enterprise:</span>
+        <span>{{company_name}}</span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">Organisation number:</span>
+        <span>{{company_code}}</span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">General Manager:</span>
+        <span>{{ceo_fullname}}</span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">Address:</span>
+        <span>{{company_address}}</span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">Postal code, city/town:</span>
+        <span>{{company_postcode}}, {{company_city}}</span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">Country*:</span>
+        <span>{{company_country}}</span>
+      </div>
+
+      <p style="margin-top: 16px; margin-bottom: 16px;">
+        It is hereby confirmed that the enterprise is working systematically to ensure compliance with the provisions of
+        relevant health, safety and environmental legislation and thus complies with the requirements of the regulations
+        relating to systematic health, environmental and safety activities in undertakings (Internal Control
+        Regulations), laid down by the Royal Decree of 6 December 1996 in accordance with the Act of 17 June 2005 no. 62
+        relating to working environment, working hours and employment protection, etc. (Working Environment Act).
+        <br /><br />
+        It is confirmed that the enterprise is lawfully organised in accordance with applicable tax and working
+        environment legislation as regards employees' labour and social rights. It is accepted that the client is
+        entitled, upon request, to review and verify the enterprise's system for complying with health, safety and
+        environment requirements.
+      </p>
+
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr>
+            <th style="width: 40%;">General Manager:</th>
+            <th style="width: 30%;">Signature:</th>
+            <th style="width: 30%;">Date:</th>
+          </tr>
+          <tr>
+            <td style="width: 40%;">{{ceo_fullname}}</td>
+            <td style="width: 30%;">_[Signature]_</td>
+            <td style="width: 30%;">_[Signing date, time]_</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="mb-2">
+        It is hereby confirmed that systematic measures to ensure compliance with the above-mentioned provisions of
+        relevant health, safety and environmental legislation have been implemented.
+      </p>
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr>
+            <th style="width: 40%;">Employee representative:</th>
+            <th style="width: 30%;">Signature:</th>
+            <th style="width: 30%;">Date:</th>
+          </tr>
+          <tr>
+            <td style="width: 40%;">{{representative_fullname}}</td>
+            <td style="width: 30%;">_[Signature]_</td>
+            <td style="width: 30%;">_[Signing date, time]_</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        *<i>The following applies to foreign contractors:</i>
+        <br />
+        It is hereby confirmed that relevant health, safety and environmental legislation as set out in the regulations
+        relating to systematic health, environmental and safety activities in undertakings (Internal Control
+        Regulations), laid down by the Royal Decree of 6 December 1996 in accordance with the Act of 17 June 2005 no. 62
+        relating to working environment, working hours and employment protection, etc. (Working Environment Act), has
+        been taken into account in preparing the offer//tender. I accept that the client is entitled, on request, to
+        review and verify the enterprise's system for complying with health, safety and environment requirements.
+        <br /><br />
+        It is accepted that the client is entitled, upon request, to review and verify the enterprise's system for
+        complying with health, safety and environment requirements.
+      </p>
+
+      <p class="mv-2">Binding signature:</p>
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr>
+            <th style="width: 40%;">General Manager:</th>
+            <th style="width: 30%;">Signature:</th>
+            <th style="width: 30%;">Date:</th>
+          </tr>
+          <tr>
+            <td style="width: 40%;">{{ceo_fullname}}</td>
+            <td style="width: 30%;">_[Signature]_</td>
+            <td style="width: 30%;">_[Signing date, time]_</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    {{/if}}
+
+    <!--    Company Information-->
+    {{#if isCompanyInformationVisible}}
+    <h2 class="new-page">Company Information</h2>
+    <div>
+      <h3>Company Details</h3>
+
+      <p style="font-weight: bold; font-size: 18px; margin-bottom: 16px;">Facts about the company:</p>
+      <div>
+        <span style="width: 200px; display: inline-block">Name of enterprise:</span>
+        <span>{{company_name}}</span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">Organisation number:</span>
+        <span>{{company_code}}</span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">General Manager:</span>
+        <span>{{ceo_fullname}}</span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">Address:</span>
+        <span>{{company_address}}</span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">Postal code, city/town:</span>
+        <span>{{company_postcode}}, {{company_city}}</span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">Country:</span>
+        <span>{{company_country}}</span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">Phone:</span>
+        <span>{{company_phone}}</span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">Website:</span>
+        <span><a href="{{company_website}}">{{company_website}}</a></span>
+      </div>
+      <div>
+        <span style="width: 200px; display: inline-block">Number of employees:</span>
+        <span>{{number_of_employees}}</span>
+      </div>
+
+      <p class="mv-2 bold">1. Training</p>
+      <p>The Working Environment Act § 3-5 requires the employer to undergo training in health, environmental and safety
+        work. In addition, the employees shall have sufficient knowledge and skills in the systematic HSE work. We
+        ensure that these provisions are followed up, and participate in relevant courses on health, environment and
+        safety that are imposed on us. We also have routines for the implementation and control of training that
+        requires certification.</p>
+
+      <p class="mv-2 bold">2. Safety rounds</p>
+      <p>We conduct safety rounds at least twice a year. We use checklists from the HSE system. Findings from the safety
+        round are used to assess the risk in a better way, and as input for new routines. Violations shall be recorded
+        in the "Violation processing" module and corrected as described in the next point.</p>
+
+      <p class="mv-2 bold">3. Violations and follow-up violations</p>
+      <p>Fails are registered as violations and they should be described how to resolve them, both in the short and long
+        term. In addition, the person responsible for resolving the violation shall be registered, as well as a deadline
+        with a reminder. All of the company's employees must participate actively in this work.</p>
+
+      <p class="mv-2 bold">4. Accidents and injuries</p>
+      <p>We have our own forms for near misses and illnesses that may have their cause in conditions at the workplace.
+        Serious accidents shall always be reported to the Norwegian Labor Inspection Authority, the nearest police
+        authority and NAV. Forms, links and information can be found in the HSE system's form collection.</p>
+
+      <p class="mv-2 bold">5. Risk analysis</p>
+      <p>We carry out risk analysis regularly. Both interpersonal relationships, material values ​​and the external
+        environment will be areas that we have to survey in terms of risk. For us, risk assessment is a continuous way
+        to think about safety, and is also carried out when changes have taken place that could have an impact.</p>
+
+      <p class="mv-2 bold">6. Annual review</p>
+      <p>Every year we review our health, environment and safety work annually. The company's documentation is reviewed
+        item by item. The purpose is to see if what is written corresponds with reality. Conditions that need to be
+        corrected are recorded in the HSE system. The review is carried out each year by December.</p>
+
+      <p class="mv-2 bold">7. Laws and regulations</p>
+      <p>We use <a href="https://lovdata.no/">https://lovdata.no/</a> and <a
+        href="https://www.arbeidstilsynet.no/regelverk/om-regelverket/">https://www.arbeidstilsynet.no/regelverk/om-regelverket/</a>
+        to find updated laws and regulations. The general manager is responsible for and obtains the applicable laws and
+        regulations.</p>
+    </div>
+    {{/if}}
+
+    <!--    Organisational Structure-->
+    {{#if isOrgStructureVisible}}
+    <h2 class="new-page">Organisational Structure</h2>
+    {{/if}}
+
+    <!--    Risk Assessment-->
+    {{#if isRiskAssessmentVisible}}
+    <h2 class="new-page">Risk Assessment</h2>
+    <div>
+      <h3>Risk Assessment</h3>
+      <p class="mv-2">Company: {{company_name}}</p>
+      <div>
+        {{#if risks.length}}
+        <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+          <tbody>
+            <tr class="table-header" style="height: 120px">
+              <th style="width: 20px; vertical-align: bottom">
+                <span class="vertical-th-content">Priority</span>
+              </th>
+              <th style="width: 20%; vertical-align: top; text-align: center">Risk Description</th>
+              <th style="vertical-align: top; text-align: center">Risk Reducing Measures</th>
+              <th style="width: 20px; vertical-align: bottom">
+                <span class="vertical-th-content">Consequences</span>
+              </th>
+              <th style="width: 20px; vertical-align: bottom">
+                <span class="vertical-th-content">Probability</span>
+              </th>
+              <th style="width: 20px; vertical-align: bottom">
+                <span class="vertical-th-content">Risk Level</span>
+              </th>
+              <th style="width: 8%; vertical-align: top; text-align: center">Assessment Date/Responsible Manager</th>
+            </tr>
+            {{#each risks}}
+            <tr style="min-height: 120px">
+              <td style="width: 20px; vertical-align: top">{{priority}}</td>
+              <td style="width: 20%; vertical-align: top">{{name}}</td>
+              <td style="width: 50%; vertical-align: top">
+                <ul>
+                  {{#each barriers}}
+                  <li>{{title}}</li>
+                  {{/each}}
+                </ul>
+              </td>
+              <td style="width: 20px; vertical-align: top">
+                <span class="vertical-th-content">{{consequence}}</span>
+              </td>
+              <td style="width: 20px; vertical-align: bottom; height: 110px">
+                <span class="vertical-th-content">{{probability}}</span>
+              </td>
+              <td style="width: 20px; vertical-align: top; text-align: center">
+                <div class="dot {{risk_level_color}}"></div>
+                <b>{{risk_level}}</b>
+              </td>
+              <td style="width: 8%; vertical-align: top; text-align: center">
+                {{assessment_date}}/{{responsible_user}}
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        {{/if}}
+      </div>
+
+      <h3>Action Plan</h3>
+      <div>
+        {{#if risks.length}}
+        <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px">
+          <tbody>
+            <tr class="table-header" style="height: 90px">
+              <th class="cell-border" style="width: 20px; vertical-align: bottom">
+                <span class="vertical-th-content">Priority</span>
+              </th>
+              <th class="cell-border" style="width: 20%; vertical-align: top; text-align: center">Risk Description</th>
+              <th class="cell-border" style="width: 20px; vertical-align: bottom; border: 1px solid black">
+                <span class="vertical-th-content">Risk Level</span>
+              </th>
+              <th class="cell-border" style="width: 8%; vertical-align: top; text-align: center">Responsible</th>
+              <th class="cell-border" style="width: 8%; vertical-align: top; text-align: center">Status</th>
+              <th class="cell-border" style="width: 50%; vertical-align: top; text-align: center">Risk Reducing Measures</th>
+              <th class="cell-border" style="width: 8%; vertical-align: top; text-align: center">Deadline</th>
+            </tr>
+
+            {{#each risks}}
+            <tr style="border-top: 2px solid black">
+              <td class="cell-border" style="width: 20px; vertical-align: top; border-left: 2px solid black; border-bottom: 2px solid black" rowspan="{{barriers.length}}">{{priority}}</td>
+              <td class="cell-border" style="width: 20%; vertical-align: top; border-bottom: 2px solid black" rowspan="{{barriers.length}}">{{name}}</td>
+              <td class="cell-border" style="width: 20px; vertical-align: top; border-bottom: 2px solid black; text-align: center" rowspan="{{barriers.length}}">
+                <div class="dot {{risk_level_color}}"></div>
+                <b>{{risk_level}}</b>
+              </td>
+              <td class="cell-border" style="width: 8%; vertical-align: top; border-bottom: 2px solid black" rowspan="{{barriers.length}}">{{responsible_user}}</td>
+              <td class="cell-border" style="width: 8%; vertical-align: top; border-bottom: 2px solid black" rowspan="{{barriers.length}}">{{status}}</td>
+              <td class="cell-border" style="width: 50%; vertical-align: top">{{barriers.0.title}}</td>
+              <td class="cell-border" style="width: 8%; vertical-align: top; border-right: 2px solid black">{{barriers.0.date}}</td>
+            </tr>
+            {{#each barriers}}
+            {{#if @index}}
+            <tr>
+              <td class="cell-border" style="width: 50%; vertical-align: top">{{title}}</td>
+              <td class="cell-border" style="width: 50%; vertical-align: top; border-right: 2px solid black">{{date}}</td>
+            </tr>
+            {{/if}}
+            {{/each}}
+            {{/each}}
+          </tbody>
+        </table>
+        {{/if}}
+      </div>
+
+      <h3>Criteria for Assessment of Consequences and Probability</h3>
+      <div>
+        <p class="bold">Consequences</p>
+        <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+          <tbody>
+            <tr>
+              <td style="width: 5%; font-weight: bold; text-align: center">1</td>
+              <td style="width: 20%; font-weight: bold">Low significance</td>
+              <td style="width: 75%;">Negligible personal injury/discomfort. No absence.</td>
+            </tr>
+            <tr>
+              <td style="width: 5%; font-weight: bold; text-align: center">2</td>
+              <td style="width: 20%; font-weight: bold">Less serious</td>
+              <td style="width: 75%;">Minor, temporary personal injury. Absence of a maximum of three days.</td>
+            </tr>
+            <tr>
+              <td style="width: 5%; font-weight: bold; text-align: center">3</td>
+              <td style="width: 20%; font-weight: bold">Severe</td>
+              <td style="width: 75%;">Serious injury/illness, long-term consequences. May result in longer absences.
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 5%; font-weight: bold; text-align: center">4</td>
+              <td style="width: 20%; font-weight: bold">Critical</td>
+              <td style="width: 75%;">Permanent injuries/disability. Several individual cases of seriously injured/sick
+                people.
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 5%; font-weight: bold; text-align: center">5</td>
+              <td style="width: 20%; font-weight: bold">Catastrophic</td>
+              <td style="width: 75%;">Death. Many seriously ill/injured.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="bold">Probability</p>
+        <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+          <tbody>
+            <tr>
+              <td style="width: 5%; font-weight: bold; text-align: center">1</td>
+              <td style="width: 20%; font-weight: bold">Very unlikely</td>
+              <td style="width: 75%;">Probably won't happen. Never heard of.</td>
+            </tr>
+            <tr>
+              <td style="width: 5%; font-weight: bold; text-align: center">2</td>
+              <td style="width: 20%; font-weight: bold">Unlikely</td>
+              <td style="width: 75%;">Probably won't happen. Have heard of.</td>
+            </tr>
+            <tr>
+              <td style="width: 5%; font-weight: bold; text-align: center">3</td>
+              <td style="width: 20%; font-weight: bold">Likely</td>
+              <td style="width: 75%;">Will be able to happen one or more times during the time period.</td>
+            </tr>
+            <tr>
+              <td style="width: 5%; font-weight: bold; text-align: center">4</td>
+              <td style="width: 20%; font-weight: bold">Very likely</td>
+              <td style="width: 75%;">Could happen several times a year.</td>
+            </tr>
+            <tr>
+              <td style="width: 5%; font-weight: bold; text-align: center">5</td>
+              <td style="width: 20%; font-weight: bold">Especially likely</td>
+              <td style="width: 75%;">Will be able to happen weekly/daily.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="bold">Acceptance Criteria</p>
+        <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+          <tbody>
+            <tr style="background-color: rgb(255,0,0); color: white">
+              <td style="width: 8%; font-weight: bold; text-align: center">10-25</td>
+              <td style="width: 20%; font-weight: bold">High risk</td>
+              <td style="width: 72%; font-weight: bold">Not acceptable. Risk-reducing measures must be implemented.</td>
+            </tr>
+            <tr style="background-color: rgb(255,255,0)">
+              <td style="width: 8%; font-weight: bold; text-align: center">5-9</td>
+              <td style="width: 20%; font-weight: bold">Medium risk</td>
+              <td style="width: 72%;">
+                <b>Risk-reducing measures are assessed (cost/benefit). Risk is monitored.</b>
+                <br />
+                The combination of several unwanted events can have a reinforcing effect.
+              </td>
+            </tr>
+            <tr style="background-color: rgb(131,204,72)">
+              <td style="width: 8%; font-weight: bold; text-align: center">1-4</td>
+              <td style="width: 20%; font-weight: bold">Low risk</td>
+              <td style="width: 72%; font-weight: bold">Accepted. Action not required.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {{/if}}
+
+    <!--    HSE Routines-->
+    {{#if isHseRoutinesVisible}}
+    <h2>HSE Routines</h2>
+    <div>
+      {{#each routines}}
+      <h4>{{name}}</h4>
+
+      <p>Routine's version: {{version}}</p>
+      <p>Routine last revised by: {{last_revised_by}}</p>
+      <p>Routine last revised on: {{last_revised_date}}</p>
+      <p class="mb-2">Responsible: {{responsible_user}}</p>
+
+      {{{content}}}
+      {{/each}}
+    </div>
+    {{/if}}
+
+    <!--    Read Confirmations-->
+    {{#if isReadConfirmationsVisible}}
+    <h2>Read Confirmations</h2>
+    <div>
+      <p class="mb-2"><i>I hereby confirm that (1) I had sufficient time to read this HSE handbook, and my manager have
+        explained the handbook's contents that were unclear to me (if any), and (2) I have fully read this HSE handbook
+        in the Lithuanian and Norwegian languages, understood all handbook's contents and undertake to comply with its
+        provisions:</i></p>
+
+      <table style="border-collapse: collapse; width: 100%; margin-bottom: 16px" border="1">
+        <tbody>
+          <tr>
+            <th style="width: 40%;">Name, Surname:</th>
+            <th style="width: 30%;">Signature:</th>
+            <th style="width: 30%;">Date:</th>
+          </tr>
+          <tr>
+            <td style="width: 40%;">[Name of the user]</td>
+            <td style="width: 30%;">_[Signature]_</td>
+            <td style="width: 30%;">_[Signing date, time]_</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    {{/if}}
+  </body>
+</html>

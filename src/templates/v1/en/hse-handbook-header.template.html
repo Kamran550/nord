@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style rel="stylesheet">
+        p {
+            margin-top: 0;
+            margin-bottom: 0
+        }
+    </style>
+  </head>
+  <body>
+    <div style="padding-bottom: 8px; border-bottom: 1px solid #000000">
+      <div style="width: 33%; display: inline-block; vertical-align: top">
+        <p>[CO LOGO]</p>
+      </div>
+      <div style="width: 33%; display: inline-block">
+        <p>Handbook's version: {{handbook_version}}</p>
+        <p>Create by: {{created_by_name}} {{created_by_lastname}}</p>
+        <p>Create on: {{handbook_creation_date}}</p>
+        <p>Last revised by: {{last_revised_by_name}} {{last_revised_by_lastname}}</p>
+        <p>Last revised on: {{last_revised_date}}</p>
+      </div>
+      <div style="width: 33%; display: inline-block; text-align: right">
+        <p>{{company_name}}</p>
+        <p>Org. nr.: {{company_code}}</p>
+        <p>tel. nr.: {{company_phone}}</p>
+        <p>{{company_address}}, {{company_postcode}}, {{company_city}}, {{company_country}}</p>
+        <p><a href="{{company_website}}" style="color: black">{{company_website}}</a></p>
+      </div>
+    </div>
+  </body>
+</html>

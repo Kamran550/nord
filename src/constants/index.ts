@@ -1,0 +1,11 @@
+export const CANNOT_DELETE_FOREIGN_CONSTRAINT = 1451;
+export const NO_REFERENCE_ROW = 1452;
+export const NO_COLUMN_DEFAULT_ROW = 1364;
+
+export enum ROLE_LEVELS {
+  SUPERADMIN = 1,
+  LEADER = 2,
+  MANAGER = 3,
+  WORKER = 4,
+  CLIENT = 5,
+}

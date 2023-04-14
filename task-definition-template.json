@@ -1,0 +1,84 @@
+{
+    "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT}:role/${ENV}-${IMAGE_NAME}-ecsTaskExecutionRole",
+    "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT}:role/${ENV}-${IMAGE_NAME}-ecsServiceTaskRole",
+    "memory": "${TASK_MEMORY}",
+    "cpu": "${TASK_CPU}",
+    "family": "${IMAGE_NAME}-${ENV}",
+    "containerDefinitions": [
+      {
+        "name": "${IMAGE_NAME}",
+        "image": "${AWS_ACCOUNT}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_NAME}:${TAG}",
+        "portMappings": [
+          {
+            "hostPort": 0,
+            "containerPort": 3000,
+            "protocol": "tcp"
+          }
+        ],
+        "secrets": [
+          {
+            "name": "DB_PASSWORD",
+            "valueFrom": "/nord/${ENV}/rds/database_password"
+          },
+          {
+            "name": "DB_HOST",
+            "valueFrom": "/nord/${ENV}/rds/database_address"
+          },
+          {
+            "name": "DB_PORT",
+            "valueFrom": "/nord/${ENV}/rds/database_port"
+          },
+          {
+            "name": "DB_USERNAME",
+            "valueFrom": "/nord/${ENV}/rds/database_username"
+          },
+          {
+            "name": "DB_DATABASE",
+            "valueFrom": "/nord/${ENV}/rds/database_name"
+          },
+          {
+              "name": "JWT_SECRET",
+              "valueFrom": "/nord/${ENV}/jwt_secret"
+          },
+          {
+            "name": "MAILGUN_SECRET",
+            "valueFrom": "/nord/${ENV}/mailgun_secret"
+          }
+        ],
+        "environment": [
+          {
+            "name": "ENV",
+            "value": "${ENV}"
+          },
+          {
+            "name": "DB_CONNECTION",
+            "value": "mysql"
+          },
+          {
+            "name": "WKHTMLTOPDF_PATH",
+            "value": "/bin/wkhtmltopdf"
+          },
+          {
+            "name": "WKHTMLTOPDF_SH",
+            "value": "/bin/sh"
+          },
+          {
+            "name": "MAILGUN_ENDPOINT",
+            "value": "api.eu.mailgun.net"
+          },
+          {
+            "name": "MAILGUN_DOMAIN",
+            "value": "mg.nsystem.no"
+          }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+              "awslogs-group": "/${ENV}/${IMAGE_NAME}",
+              "awslogs-region": "${AWS_DEFAULT_REGION}",
+              "awslogs-stream-prefix": "${IMAGE_NAME}"
+            }
+        }
+      }
+    ]
+  }

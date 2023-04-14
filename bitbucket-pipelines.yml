@@ -1,0 +1,74 @@
+image: node:16-alpine
+# VAR
+# GLOBAL:
+# - IMAGE_NAME
+# - AWS_ACCESS_KEY_ID
+# - AWS_SECRET_ACCESS_KEY
+# - AWS_DEFAULT_REGION
+# - AWS_ACCOUNT
+# Per deployment:
+# Deploy:
+# - ENV
+# - RUN_MIGRATIONS
+
+definitions:
+  steps:
+    - step: &buildStep
+        name: Build Docker image and push it to ECR
+        script:
+          - docker build -t $IMAGE_NAME .
+          - pipe:  atlassian/aws-ecr-push-image:1.5.0
+            variables:
+              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+              AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+              IMAGE_NAME: $IMAGE_NAME
+              TAGS: '${BITBUCKET_BUILD_NUMBER}-${BITBUCKET_COMMIT::12} latest'
+        services:
+          - docker
+        caches:
+          - docker
+    - step: &deployStep
+        name: Deploy
+        script:
+          - export TAG="${BITBUCKET_BUILD_NUMBER}-${BITBUCKET_COMMIT::12}"
+          - apk add gettext libintl
+          - envsubst < task-definition-template.json > task-definition.json
+          - pipe: atlassian/aws-ecs-deploy:1.6.1
+            variables:
+              CLUSTER_NAME: $ENV
+              SERVICE_NAME: $IMAGE_NAME
+              TASK_DEFINITION: task-definition.json
+    - step: &testStep
+        name: Test
+        script:
+          - docker build -t $IMAGE_NAME --target development .
+          - docker run --rm  $IMAGE_NAME yarn run test:ci
+        services:
+          - docker
+        caches:
+          - docker
+
+pipelines:
+  pull-requests:
+    feature/*:
+      - parallel:
+          - step:
+              <<: *testStep
+          - step:
+              <<: *buildStep
+              name: Build Stage
+      - step:
+          <<: *deployStep
+          name: Deploy Stage
+          trigger: manual
+          deployment: Stage-Deploy
+  branches:
+    staging:
+      - step:
+          <<: *buildStep
+          name: Build Stage
+      - step:
+          <<: *deployStep
+          name: Deploy Stage
+          deployment: Stage-Deploy
