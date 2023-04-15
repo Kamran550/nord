@@ -7,6 +7,7 @@ import { User } from '../users/entities/user.entity';
 import { HseHandbook } from '../hse-handbook/entities/hse-handbook.entity';
 import { EmailService } from '../email/email.service';
 import { DataSource } from 'typeorm';
+import { S3Service } from '../s3/s3.service';
 
 describe('HseHandbookSignaturesController', () => {
   let controller: HseHandbookSignaturesController;
@@ -32,6 +33,10 @@ describe('HseHandbookSignaturesController', () => {
         {
           provide: EmailService,
           useFactory: () => ({ send: jest.fn() })
+        },
+        {
+          provide:S3Service,
+          useFactory: () => ({sign:jest.fn()})
         }
       ],
     }).compile();

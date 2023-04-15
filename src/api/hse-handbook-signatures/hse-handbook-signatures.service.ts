@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { SendForSigningDto } from './dto/send-for-signing.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Not, Repository } from 'typeorm';
@@ -14,7 +14,7 @@ import { HseHandbook } from '../hse-handbook/entities/hse-handbook.entity';
 import applyLanguageFromTranslation from '../../helpers/apply-language-from-translations';
 import { RemindForSigningDto } from './dto/remind-for-signing.dto';
 import { EmailService } from '../email/email.service';
-import { S3Service } from './s3/s3.service';
+import { S3Service } from '../s3/s3.service';
 
 @Injectable()
 export class HseHandbookSignaturesService {

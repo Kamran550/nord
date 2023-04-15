@@ -6,7 +6,7 @@ import { HseHandbookSignature } from './entities/hse-handbook-signature.entity';
 import { User } from '../users/entities/user.entity';
 import { HseHandbook } from '../hse-handbook/entities/hse-handbook.entity';
 import { EmailModule } from '../email/email.module';
-import { S3Module } from './s3/s3.module';
+import { S3Module } from '../s3/s3.module';
 
 @Module({
   imports: [

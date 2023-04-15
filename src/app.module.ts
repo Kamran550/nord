@@ -23,6 +23,7 @@ import { HseHandbookSignaturesModule } from './api/hse-handbook-signatures/hse-h
 import { StatusesModule } from './api/statuses/statuses.module';
 import { PositionsModule } from './api/positions/positions.module';
 import { OrgStructuresModule } from './api/org-structures/org-structures.module';
+import { S3Module } from './api/s3/s3.module';
 
 
 @Module({
@@ -52,7 +53,8 @@ import { OrgStructuresModule } from './api/org-structures/org-structures.module'
     HseHandbookSignaturesModule,
     StatusesModule,
     PositionsModule,
-    OrgStructuresModule
+    OrgStructuresModule,
+    S3Module
   ],
   controllers: [AppController],
 })
