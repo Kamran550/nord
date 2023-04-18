@@ -61,7 +61,6 @@ export class S3Service {
       Bucket: bucket,
       Key: key
     }));
-
     const byteArray = await response.Body.transformToByteArray();
     return `data:image/png;base64, ${Buffer.from(byteArray).toString('base64')}`;
   }
