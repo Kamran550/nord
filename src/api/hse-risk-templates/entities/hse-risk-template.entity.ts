@@ -32,7 +32,7 @@ export class HseRiskTemplate {
   isVisible: boolean;
 
   @ApiProperty()
-  @Column()
+  @Column({length:1000})
   name: string;
 
   @ApiProperty()

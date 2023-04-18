@@ -51,7 +51,7 @@ export class CompanyHseRiskTemplate {
   isVisible: boolean;
 
   @ApiProperty()
-  @Column()
+  @Column({length:1000})
   name: string;
 
   @ApiProperty()
