@@ -35,10 +35,11 @@ export class HseHandbookSignaturesController {
   @UseInterceptors(FileInterceptor('file'))
   @Patch('sign/:id')
   sign(
+    @UserAndLang() { user },
     @UploadedFile() file: Express.Multer.File,
     @Param('id') id: string
   ) {
-    return this.hseHandbookSignaturesService.sign(id, file);
+    return this.hseHandbookSignaturesService.sign(id, file, user);
   }
 
   @Get()

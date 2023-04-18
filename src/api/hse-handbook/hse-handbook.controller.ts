@@ -32,6 +32,15 @@ export class HseHandbookController {
     return this.hseHandbookService.getPdfForExistingVersion(res, { user, params: data, lang });
   }
 
+  @Post('print-with-signatures')
+  printPdfWithSignatures(
+    @UserAndLang() { user, lang },
+    @Res() res: Response,
+    @Body() data: any
+  ) {
+    return this.hseHandbookService.getPdfWithSignatures(res, { user, params: data, lang });
+  }
+
   @Get('has-new-version')
   isNewVersionAvailable(
     @UserAndLang() { user },

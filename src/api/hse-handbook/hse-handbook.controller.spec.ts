@@ -13,6 +13,8 @@ import { HseHandbookAssignedRoutine } from './entities/hse-handbook-assigned-rou
 import { HseHandbookSignaturesService } from '../hse-handbook-signatures/hse-handbook-signatures.service';
 import { HseHandbookOrgStructure } from './entities/hse-handbook-org-structure.entity';
 import { OrgStructuresService } from '../org-structures/org-structures.service';
+import { S3Service } from '../s3/s3.service';
+import { HseHandbookSignature } from '../hse-handbook-signatures/entities/hse-handbook-signature.entity';
 
 describe('HseHandbookController', () => {
   let controller: HseHandbookController;
@@ -50,11 +52,18 @@ describe('HseHandbookController', () => {
           provide: getRepositoryToken(HseHandbookOrgStructure),
           useValue: jest.fn()
         }, {
+          provide: getRepositoryToken(HseHandbookSignature),
+          useValue: jest.fn()
+        }, {
           provide: HseHandbookSignaturesService,
           useFactory: () => ({ send: jest.fn() })
         }, {
           provide: OrgStructuresService,
           useFactory: () => ({ findOne: jest.fn() })
+        },
+        {
+          provide: S3Service,
+          useFactory: () => ({ uploadFile: jest.fn() })
         }
       ],
     }).compile();

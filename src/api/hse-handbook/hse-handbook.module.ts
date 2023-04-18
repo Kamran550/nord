@@ -14,13 +14,16 @@ import { HseHandbookAssignedRoutineTranslation } from './entities/hse-handbook-a
 import { HseHandbookSignaturesModule } from '../hse-handbook-signatures/hse-handbook-signatures.module';
 import { OrgStructuresModule } from '../org-structures/org-structures.module';
 import { HseHandbookOrgStructure } from './entities/hse-handbook-org-structure.entity';
+import { S3Module } from '../s3/s3.module';
+import { HseHandbookSignature } from '../hse-handbook-signatures/entities/hse-handbook-signature.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
     User, Company, AssignedHseRisk, AssignedHseRoutine, HseHandbook,
     HseHandbookAssignedRisk, HseHandbookAssignedRiskTranslation,
-    HseHandbookAssignedRoutine, HseHandbookAssignedRoutineTranslation, HseHandbookOrgStructure
-  ]), HseHandbookSignaturesModule, OrgStructuresModule],
+    HseHandbookAssignedRoutine, HseHandbookAssignedRoutineTranslation, HseHandbookOrgStructure,
+    HseHandbookSignature
+  ]), HseHandbookSignaturesModule, OrgStructuresModule, S3Module],
   controllers: [HseHandbookController],
   providers: [HseHandbookService]
 })

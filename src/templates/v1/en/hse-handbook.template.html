@@ -130,11 +130,17 @@
             <th style="width: 30%;">Signature:</th>
             <th style="width: 30%;">Date:</th>
           </tr>
+          {{#each employeesSignature}}
           <tr>
-            <td style="width: 40%;">[Name of the user]</td>
-            <td style="width: 30%;">_[Signature]_</td>
-            <td style="width: 30%;">_[Signing date, time]_</td>
+            <td style="width: 40%;">{{name}}</td>
+            <td style="width: 30%; text-align: center">
+              {{#if signature}}
+              <img src="{{signature}}" height="70"/>
+              {{/if}}
+            </td>
+            <td style="width: 30%;">{{date}}</td>
           </tr>
+          {{/each}}
         </tbody>
       </table>
       {{/if}}
@@ -218,8 +224,12 @@
           </tr>
           <tr>
             <td style="width: 40%;">{{representative_fullname}}</td>
-            <td style="width: 30%;">_[Signature]_</td>
-            <td style="width: 30%;">_[Signing date, time]_</td>
+            <td style="width: 30%; text-align: center">
+              {{#if representativeSignature}}
+              <img src="{{representativeSignature}}" height="70"/>
+              {{/if}}
+            </td>
+            <td style="width: 30%;">{{representativeSignatureDate}}</td>
           </tr>
         </tbody>
       </table>
@@ -233,8 +243,12 @@
           </tr>
           <tr>
             <td style="width: 40%;">{{ceo_fullname}}</td>
-            <td style="width: 30%;">_[Signature]_</td>
-            <td style="width: 30%;">_[Signing date, time]_</td>
+            <td style="width: 30%; text-align: center">
+              {{#if ceoSignature}}
+              <img src="{{ceoSignature}}" height="70"/>
+              {{/if}}
+            </td>
+            <td style="width: 30%;">{{ceoSignatureDate}}</td>
           </tr>
         </tbody>
       </table>
@@ -248,11 +262,17 @@
             <th style="width: 30%;">Signature:</th>
             <th style="width: 30%;">Date:</th>
           </tr>
+          {{#each employeesSignature}}
           <tr>
-            <td style="width: 40%;">[Name of the user]</td>
-            <td style="width: 30%;">_[Signature]_</td>
-            <td style="width: 30%;">_[Signing date, time]_</td>
+            <td style="width: 40%;">{{name}}</td>
+            <td style="width: 30%; text-align: center">
+              {{#if signature}}
+              <img src="{{signature}}" height="70"/>
+              {{/if}}
+            </td>
+            <td style="width: 30%;">{{date}}</td>
           </tr>
+          {{/each}}
         </tbody>
       </table>
       {{/if}}
@@ -333,8 +353,12 @@
           </tr>
           <tr>
             <td style="width: 40%;">{{ceo_fullname}}</td>
-            <td style="width: 30%;">_[Signature]_</td>
-            <td style="width: 30%;">_[Signing date, time]_</td>
+            <td style="width: 30%; text-align: center">
+              {{#if ceoSignature}}
+              <img src="{{ceoSignature}}" height="70"/>
+              {{/if}}
+            </td>
+            <td style="width: 30%;">{{ceoSignatureDate}}</td>
           </tr>
         </tbody>
       </table>
@@ -352,8 +376,12 @@
           </tr>
           <tr>
             <td style="width: 40%;">{{representative_fullname}}</td>
-            <td style="width: 30%;">_[Signature]_</td>
-            <td style="width: 30%;">_[Signing date, time]_</td>
+            <td style="width: 30%; text-align: center">
+              {{#if representativeSignature}}
+              <img src="{{representativeSignature}}" height="70"/>
+              {{/if}}
+            </td>
+            <td style="width: 30%;">{{representativeSignatureDate}}</td>
           </tr>
         </tbody>
       </table>
@@ -382,8 +410,12 @@
           </tr>
           <tr>
             <td style="width: 40%;">{{ceo_fullname}}</td>
-            <td style="width: 30%;">_[Signature]_</td>
-            <td style="width: 30%;">_[Signing date, time]_</td>
+            <td style="width: 30%; text-align: center">
+              {{#if ceoSignature}}
+              <img src="{{ceoSignature}}" height="70"/>
+              {{/if}}
+            </td>
+            <td style="width: 30%;">{{ceoSignatureDate}}</td>
           </tr>
         </tbody>
       </table>
@@ -714,11 +746,17 @@
             <th style="width: 30%;">Signature:</th>
             <th style="width: 30%;">Date:</th>
           </tr>
+          {{#each employeesSignature}}
           <tr>
-            <td style="width: 40%;">[Name of the user]</td>
-            <td style="width: 30%;">_[Signature]_</td>
-            <td style="width: 30%;">_[Signing date, time]_</td>
+            <td style="width: 40%;">{{name}}</td>
+            <td style="width: 30%; text-align: center">
+              {{#if signature}}
+              <img src="{{signature}}" height="70"/>
+              {{/if}}
+            </td>
+            <td style="width: 30%;">{{date}}</td>
           </tr>
+          {{/each}}
         </tbody>
       </table>
     </div>

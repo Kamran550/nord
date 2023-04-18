@@ -8,17 +8,19 @@ import { ILangOptions } from '../types';
 import { FilterParams } from './filter.pipe';
 import applyLanguageFromTranslation from './apply-language-from-translations';
 
+
 type SearchParam = {
-  keys: string[];
-  value: string;
-};
+  keys: string[],
+  value: string
+}
 export type FindWithLangOptions = {
   lang: string;
   pagination?: PaginationParams;
-  search?: SearchParam;
+  search?: SearchParam
   hasTranslations?: boolean;
-  filters?: FilterParams;
-};
+  filters?: FilterParams
+}
+
 
 const formatLang = (obj: any) => {
   if (!obj) return obj;
@@ -27,26 +29,24 @@ const formatLang = (obj: any) => {
 
   if (translations.length) {
     const { uuid, locale, ...translatableFields } = translations[0];
-    Object.keys(translatableFields).forEach((key) => {
+    Object.keys(translatableFields).forEach(key => {
       if (Array.isArray(translatableFields[key])) {
         targetCopy[key] = translatableFields[key].map((el, index) => {
           const result = {};
-          Object.keys(el).forEach((innerKey) => {
+          Object.keys(el).forEach(innerKey => {
             result[innerKey] = {
               lt: targetCopy[key][index][innerKey],
-              ...translations.reduce(
-                (s, c) => ({ ...s, [c.locale]: c[key][index][innerKey] }),
-                {}
-              ),
+              ...translations.reduce((s, c) => ({ ...s, [c.locale]: c[key][index][innerKey] }), {})
             };
           });
 
           return result;
         });
-      } else {
+      }
+      else {
         targetCopy[key] = {
           lt: targetCopy[key],
-          ...translations.reduce((s, c) => ({ ...s, [c.locale]: c[key] }), {}),
+          ...translations.reduce((s, c) => ({ ...s, [c.locale]: c[key] }), {})
         };
       }
     });
@@ -57,18 +57,11 @@ const formatLang = (obj: any) => {
 
 const addLangFindOptions = (
   options: any,
-  {
-    lang,
-    search,
-    hasTranslations,
-  }: { lang: string; search?: SearchParam; hasTranslations?: boolean }
+  { lang, search, hasTranslations }: { lang: string; search?: SearchParam, hasTranslations?: boolean }
 ) => {
   // Add 'translations' relation if needed
   if (hasTranslations || lang !== 'lt') {
-    if (
-      Array.isArray(options.relations) &&
-      !options.relations.includes('translations')
-    ) {
+    if (Array.isArray(options.relations) && !options.relations.includes('translations')) {
       options.relations.push('translations');
     } else if (!options.relations) {
       options.relations = ['translations'];
@@ -86,17 +79,17 @@ const addLangFindOptions = (
 
     const currentWhere = { ...options.where };
     if (lang === 'lt') {
-      options.where = search.keys.map((key) => ({
+      options.where = search.keys.map(key => ({
         ...currentWhere,
-        [key]: ILike(`%${search.value}%`),
+        [key]: ILike(`%${search.value}%`)
       }));
     } else {
-      options.where = search.keys.map((key) => ({
+      options.where = search.keys.map(key => ({
         ...currentWhere,
         translations: {
           ...currentWhere.translations,
-          [key]: ILike(`%${search.value}%`),
-        },
+          [key]: ILike(`%${search.value}%`)
+        }
       }));
     }
   }
@@ -109,19 +102,15 @@ const addFiltersOptions = (options: any, filters = {}) => {
   if (!filterEntries.length) return options;
 
   if (!options.where) options.where = {};
-  filterEntries.forEach(
-    ([key, value]: [string, { condition: string; value: any }]) => {
-      if (value?.condition === 'equals') options.where[key] = value?.value;
-    }
-  );
+  filterEntries.forEach(([key, value]: [string, { condition: string, value: any }]) => {
+    if (value?.condition === 'equals') options.where[key] = value?.value;
+  });
 
   return options;
 };
 
-export class RepositoryWithLang<
-  T extends { uuid: string },
-  K
-> extends Repository<T> {
+
+export class RepositoryWithLang<T extends { uuid: string }, K> extends Repository<T> {
   Entity: EntityTarget<T>;
   dataSource: DataSource;
   TranslateEntity: EntityTarget<K>;
@@ -138,12 +127,8 @@ export class RepositoryWithLang<
     this.TranslateEntity = TranslateEntity;
   }
 
-  async createWithLang<K>(
-    createDto: K,
-    options: ILangOptions & { relationKey: string }
-  ) {
+  async createWithLang<K>(createDto: K, options: ILangOptions & { relationKey: string }) {
     const { ltEntity, translates } = parseTranslatedObjects(createDto);
-    console.log('OPTIONS:', options);
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -154,8 +139,7 @@ export class RepositoryWithLang<
 
       for (const translate of translates) {
         const translateEntity = await queryRunner.manager.create(
-          this.TranslateEntity,
-          { ...translate, [options.relationKey]: entity }
+          this.TranslateEntity, { ...translate, [options.relationKey]: entity }
         );
         await queryRunner.manager.save(translateEntity);
       }
@@ -164,7 +148,7 @@ export class RepositoryWithLang<
 
       return this.findOneWithLang({
         where: { uuid: entity.uuid },
-        lang: options.lang,
+        lang: options.lang
       });
     } catch (err) {
       await queryRunner.rollbackTransaction();
@@ -174,10 +158,7 @@ export class RepositoryWithLang<
     }
   }
 
-  async createMultipleWithLang<K>(
-    createDtos: K[],
-    options: ILangOptions & { relationKey: string }
-  ) {
+  async createMultipleWithLang<K>(createDtos: K[], options: ILangOptions & { relationKey: string }) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -192,8 +173,7 @@ export class RepositoryWithLang<
 
         for (const translate of translates) {
           const translateEntity = await queryRunner.manager.create(
-            this.TranslateEntity,
-            { ...translate, [options.relationKey]: entity }
+            this.TranslateEntity, { ...translate, [options.relationKey]: entity }
           );
           await queryRunner.manager.save(translateEntity);
         }
@@ -203,8 +183,8 @@ export class RepositoryWithLang<
 
       await queryRunner.commitTransaction();
       const result = await this.findAndCountWithLang({
-        where: { uuid: In(uuids) } as any,
-        lang: options.lang,
+        where: ({ uuid: In(uuids) }) as any,
+        lang: options.lang
       });
 
       return result.data;
@@ -216,9 +196,7 @@ export class RepositoryWithLang<
     }
   }
 
-  async findOneWithLang(
-    options: FindOneOptions<T> & FindWithLangOptions
-  ): Promise<T | null> {
+  async findOneWithLang(options: FindOneOptions<T> & FindWithLangOptions): Promise<T | null> {
     const { lang, hasTranslations, filters, ...rest } = options;
     const target = await this.findOne(
       addLangFindOptions(rest, { lang, hasTranslations })
@@ -228,42 +206,30 @@ export class RepositoryWithLang<
     return applyLanguageFromTranslation(target, lang);
   }
 
-  async findAndCountWithLang(
-    options: FindManyOptions<T> & FindWithLangOptions
-  ): Promise<{ data: T[]; meta: { total: number } }> {
+  async findAndCountWithLang(options: FindManyOptions<T> & FindWithLangOptions): Promise<{ data: T[], meta: { total: number } }> {
     const { lang, pagination, search, filters, ...rest } = options;
 
-    console.log('PAGINATION:',pagination);
-    
     const [data, total] = await this.findAndCount({
       ...addFiltersOptions(addLangFindOptions(rest, { lang, search }), filters),
-      ...calcTakeAndSkip(pagination),
+      ...calcTakeAndSkip(pagination)
     });
 
     return {
-      data: data.map((el) => applyLanguageFromTranslation(el, lang)),
+      data: data.map(el => applyLanguageFromTranslation(el, lang)),
       meta: {
-        total: total,
-      },
+        total: total
+      }
     };
   }
 
-  async updateWithLang<K>(
-    target: T,
-    updateDto: K,
-    options: ILangOptions & { relationKey: string }
-  ) {
+  async updateWithLang<K>(target: T, updateDto: K, options: ILangOptions & { relationKey: string }) {
     const { ltEntity, translates } = parseTranslatedObjects(updateDto);
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      await queryRunner.manager.update(
-        this.Entity,
-        { uuid: target.uuid },
-        ltEntity
-      );
+      await queryRunner.manager.update(this.Entity, { uuid: target.uuid }, ltEntity);
 
       for (const translate of translates) {
         await queryRunner.manager.update(
@@ -276,8 +242,8 @@ export class RepositoryWithLang<
       await queryRunner.commitTransaction();
 
       return this.findOneWithLang({
-        where: { uuid: target.uuid } as any,
-        lang: options.lang,
+        where: ({ uuid: target.uuid }) as any,
+        lang: options.lang
       });
     } catch (err) {
       await queryRunner.rollbackTransaction();

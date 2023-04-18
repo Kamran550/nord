@@ -8,6 +8,7 @@ import { HseHandbook } from '../hse-handbook/entities/hse-handbook.entity';
 import { EmailService } from '../email/email.service';
 import { DataSource } from 'typeorm';
 import { S3Service } from '../s3/s3.service';
+import { ConfigService } from '@nestjs/config';
 
 describe('HseHandbookSignaturesController', () => {
   let controller: HseHandbookSignaturesController;
@@ -35,8 +36,12 @@ describe('HseHandbookSignaturesController', () => {
           useFactory: () => ({ send: jest.fn() })
         },
         {
-          provide:S3Service,
-          useFactory: () => ({sign:jest.fn()})
+          provide: S3Service,
+          useFactory: () => ({ uploadFile: jest.fn() })
+        },
+        {
+          provide: ConfigService,
+          useFactory: () => ({ get: jest.fn() })
         }
       ],
     }).compile();

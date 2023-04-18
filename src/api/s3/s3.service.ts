@@ -1,4 +1,10 @@
-import { PutObjectCommand, PutObjectCommandInput, PutObjectCommandOutput, S3Client } from '@aws-sdk/client-s3';
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  PutObjectCommandInput,
+  PutObjectCommandOutput,
+  S3Client
+} from '@aws-sdk/client-s3';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -18,8 +24,8 @@ export class S3Service {
       region: this.region,
       credentials: {
         secretAccessKey: this.secretAccessKey,
-        accessKeyId: this.accessKeyId,
-      },
+        accessKeyId: this.accessKeyId
+      }
     });
   }
 
@@ -30,7 +36,7 @@ export class S3Service {
       Bucket: bucket,
       Key: key,
       ContentType: file.mimetype,
-      ACL: 'private',
+      ACL: 'private'
     };
     try {
       const response: PutObjectCommandOutput = await this.s3.send(new PutObjectCommand(input));
@@ -42,5 +48,16 @@ export class S3Service {
       this.logger.error('Cannot save file inside s3', err);
       throw err;
     }
+  }
+
+  async getFile(key: string) {
+    const bucket = this.configService.get<string>('S3_BUCKET');
+    const response = await this.s3.send(new GetObjectCommand({
+      Bucket: bucket,
+      Key: key
+    }));
+
+    const byteArray = await response.Body.transformToByteArray();
+    return `data:image/png;base64, ${Buffer.from(byteArray).toString('base64')}`;
   }
 }

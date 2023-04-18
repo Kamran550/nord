@@ -28,6 +28,11 @@ import { HseHandbookAssignedRoutineTranslation } from './entities/hse-handbook-a
 import { HseHandbookSignaturesService } from '../hse-handbook-signatures/hse-handbook-signatures.service';
 import { OrgStructuresService } from '../org-structures/org-structures.service';
 import { HseHandbookOrgStructure } from './entities/hse-handbook-org-structure.entity';
+import { S3Service } from '../s3/s3.service';
+import {
+  HseHandbookSignature,
+  HseHandbookSignatureStatus
+} from '../hse-handbook-signatures/entities/hse-handbook-signature.entity';
 
 wkhtmltopdf.command = process.env.WKHTMLTOPDF_PATH;
 wkhtmltopdf.shell = process.env.WKHTMLTOPDF_SH || wkhtmltopdf.shell;
@@ -62,8 +67,11 @@ export class HseHandbookService {
     private hseHandbookAssignedRoutinesRepository: Repository<HseHandbookAssignedRoutine>,
     @InjectRepository(HseHandbookOrgStructure)
     private hseHandbookOrgStructuresRepository: Repository<HseHandbookOrgStructure>,
+    @InjectRepository(HseHandbookSignature)
+    private hseHandbookSignaturesRepository: Repository<HseHandbookSignature>,
     private hseHandbookSignaturesService: HseHandbookSignaturesService,
-    private orgStructureService: OrgStructuresService
+    private orgStructureService: OrgStructuresService,
+    private s3Service: S3Service,
   ) {}
 
   async getPdfForNewVersion(res: Response, { user, params, lang }: { user: User; params?: any, lang: string }) {
@@ -225,6 +233,103 @@ export class HseHandbookService {
       isHseRoutinesVisible: params.isHseRoutinesVisible || !('isHseRoutinesVisible' in params),
       isReadConfirmationsVisible: false,
       showSignatures: false
+    };
+
+    return this.getPdf(res, printData);
+  }
+
+  async getPdfWithSignatures(res: Response, { user, params, lang }: { user: User; params?: any, lang: string }) {
+    const hseHandbook = await this.hseHandbooksRepository.findOne({
+      where: { uuid: params.hseHandbookUuid },
+      relations: ['safetyRepresentative', 'createdBy', 'lastRevisedBy']
+    });
+    const companyInfo = hseHandbook?.companyInfo as Company;
+    const employeesCount = await this.usersRepository.count({ where: { companyUuid: user.company.uuid, statusUuid: 'user.active' } });
+
+    const risks = await this.hseHandbookAssignedRisksRepository.find({
+      where: { hseHandbookUuid: hseHandbook.uuid },
+      relations: ['responsibleUser'],
+    });
+    const routines = await this.hseHandbookAssignedRoutinesRepository.find({
+      where: { hseHandbookUuid: hseHandbook.uuid },
+      relations: ['responsibleUser', 'lastRevisedBy']
+    });
+    const orgStructure = await this.hseHandbookOrgStructuresRepository.findOneBy({ hseHandbookUuid: hseHandbook.uuid });
+
+    // Get signatures
+    const signatures = await this.hseHandbookSignaturesRepository.find({
+      where: { handbookUuid: hseHandbook.uuid, status: HseHandbookSignatureStatus.Signed },
+      relations: ['user']
+    });
+    const ceoSignature = signatures.find(signature => signature.user.uuid === companyInfo.hseCeoUserUuid);
+    const representativeSignature = signatures.find(signature => signature.user.uuid === hseHandbook.safetyRepresentativeUuid);
+    const employeesSignature = [];
+    for (const el of signatures) {
+      employeesSignature.push({
+        name: el.user.fullName, signature: await this.s3Service.getFile(el.signature), date: format(el.updatedAt)
+      });
+    }
+
+    const printData = {
+      company_name: companyInfo?.name,
+      company_code: companyInfo?.companyCode || '-',
+      company_phone: companyInfo?.phone || '-',
+      company_address: companyInfo?.address || '-',
+      company_postcode: companyInfo?.postCode || '-',
+      company_city: companyInfo?.city || '-',
+      company_country: companyInfo?.country || '-',
+      company_website: companyInfo?.website || '-',
+      handbook_version: hseHandbook.version,
+      handbook_creation_date: format(hseHandbook.createdAt),
+      created_by_name: hseHandbook.createdBy?.firstName,
+      created_by_lastname: hseHandbook.createdBy?.lastName,
+      last_revised_by_name: hseHandbook.lastRevisedBy?.firstName,
+      last_revised_by_lastname: hseHandbook.lastRevisedBy?.lastName,
+      last_revised_date: format(hseHandbook.lastRevisedAt),
+      number_of_employees: employeesCount,
+      ceo_fullname: companyInfo?.hseCeoUser,
+      representative_fullname: hseHandbook.safetyRepresentative?.fullName,
+      risks: risks.map((risk, index) => {
+        const riskLevel = riskMatrix[risk.probability - 1][risk.consequences - 1];
+        const riskLevelColor = riskLevel >= 10 ? 'red' : riskLevel >= 5 ? 'yellow' : 'green';
+
+        return {
+          ...risk,
+          priority: index + 1,
+          probability: RiskProbability[risk.probability],
+          consequence: RiskConsequences[risk.consequences],
+          risk_level: riskLevel,
+          risk_level_color: riskLevelColor,
+          assessment_date: format(risk.assessmentDate),
+          responsible_user: risk.responsibleUser.fullName,
+          status: RiskStatusReverse[risk.status]
+        };
+      }),
+      routines: routines.map(routine => ({
+        name: routine.name,
+        version: routine.version,
+        last_revised_by: routine.lastRevisedBy?.fullName,
+        last_revised_date: format(routine.lastRevisedAt),
+        responsible_user: routine.responsibleUser?.fullName,
+        content: routine.content
+      })),
+      orgStructure: orgStructure ? this.orgStructureService.getOrgStructureHtml(orgStructure, lang) : '-',
+      isEjectSafety: hseHandbook.safetyType === 'eject',
+      isAgreementNotToHave: hseHandbook.safetyType === 'agreement-not-to-have',
+      isHseDeclarationVisible: params.isHseDeclarationVisible || !('isHseDeclarationVisible' in params),
+      isCompanyInformationVisible: params.isCompanyInformationVisible || !('isCompanyInformationVisible' in params),
+      isSafetyVisible: params.isSafetyVisible || !('isSafetyVisible' in params),
+      isOrgStructureVisible: params.isOrgStructureVisible || !('isOrgStructureVisible' in params),
+      isRiskAssessmentVisible: params.isRiskAssessmentVisible || !('isRiskAssessmentVisible' in params),
+      isHseRoutinesVisible: params.isHseRoutinesVisible || !('isHseRoutinesVisible' in params),
+      isReadConfirmationsVisible: true,
+      showSignatures: true,
+
+      ceoSignature: await this.s3Service.getFile(ceoSignature.signature),
+      ceoSignatureDate: format(ceoSignature.updatedAt) || '-',
+      representativeSignature: await this.s3Service.getFile(representativeSignature.signature),
+      representativeSignatureDate: format(representativeSignature.updatedAt) || '-',
+      employeesSignature: employeesSignature,
     };
 
     return this.getPdf(res, printData);
@@ -475,7 +580,7 @@ export class HseHandbookService {
     // Comparing org structure
     const dbOrgStructure = await this.orgStructureService.findOne(user.companyUuid, true);
     if (!hseHandbookOrgStructure || (dbOrgStructure?.updatedAt > hseHandbookOrgStructure?.lastRevisedAt)) {
-      storeChangesInfo(dbOrgStructure.lastRevisedBy, dbOrgStructure.updatedAt);
+      if (dbOrgStructure) storeChangesInfo(dbOrgStructure.lastRevisedBy, dbOrgStructure.updatedAt);
     }
 
     const wasHseCeoChanged = (lastHandbook?.companyInfo as Company)?.hseCeoUserUuid !== user.company.hseCeoUserUuid;

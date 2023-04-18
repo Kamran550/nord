@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { SendForSigningDto } from './dto/send-for-signing.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Not, Repository } from 'typeorm';
@@ -15,6 +15,7 @@ import applyLanguageFromTranslation from '../../helpers/apply-language-from-tran
 import { RemindForSigningDto } from './dto/remind-for-signing.dto';
 import { EmailService } from '../email/email.service';
 import { S3Service } from '../s3/s3.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class HseHandbookSignaturesService {
@@ -27,7 +28,8 @@ export class HseHandbookSignaturesService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private emailService: EmailService,
-    private s3Service: S3Service
+    private s3Service: S3Service,
+    private configService: ConfigService
   ) { }
 
   async findAll(options: IFindOptions) {
@@ -43,16 +45,21 @@ export class HseHandbookSignaturesService {
 
   async sign(
     id: string,
-    file: Express.Multer.File
+    file: Express.Multer.File,
+    user: User
   ) {
-    try {
-      const key = `${file.fieldname}${Date.now()}`;
-      const url = await this.s3Service.uploadFile(file, key);
-      const dataToUpdate: Partial<HseHandbookSignature> = { signature: url, status: HseHandbookSignatureStatus.Signed };
-      const sign_handbook = await this.hseHandbookSignaturesRepository.update({ uuid: id }, dataToUpdate);
-    } catch (err) {
-      throw err;
-    }
+    const signatureRecord = await this.hseHandbookSignaturesRepository.findOne({
+      where: { uuid: id },
+      relations: ['hseHandbook']
+    });
+    // TODO add proper error response
+    if (!signatureRecord || signatureRecord.status === HseHandbookSignatureStatus.Signed) return;
+    if (user.uuid !== signatureRecord.userUuid) return;
+
+    const key = `${user.companyUuid}/v${signatureRecord.handbook.version}_${user.uuid}_${Date.now()}`;
+    const url = await this.s3Service.uploadFile(file, key);
+    const dataToUpdate: Partial<HseHandbookSignature> = { signature: url, status: HseHandbookSignatureStatus.Signed };
+    await this.hseHandbookSignaturesRepository.update({ uuid: id }, dataToUpdate);
   }
 
   async findAllByUser(options: IFindOptions) {
@@ -210,12 +217,11 @@ export class HseHandbookSignaturesService {
       for (let i = 0; i < emails.length; i++) {
         await this.emailService.send({
           from: 'noreply@nsystem.no',
-          to: [emails[i], 't.danyliuk@relevant.software'],
+          to: emails[i],
           html: template({
             company_name: user.company.name,
-            company_name_root: user.company.slug,
             handbook_version: handbook.version,
-            signature_uuid: result[i].uuid
+            link: `${this.configService.get('APP_DOMAIN')}/${user.company.slug}/hse-handbook-signing/${result[i].uuid}`
           }),
           subject: `Please read & sign ${user.company.name} HSE handbook`,
         });
@@ -246,21 +252,24 @@ export class HseHandbookSignaturesService {
     const grouped: Record<string, any> = {};
     entities.forEach(entity => {
       if (!grouped[entity.handbook.version]) grouped[entity.handbook.version] = [];
-      grouped[entity.handbook.version].push(entity.user.email);
+      grouped[entity.handbook.version].push(entity);
     });
 
     const versions = Object.keys(grouped);
     for (const version of versions) {
       const template = hbs.compile(readFileSync(join(process.cwd(), 'src/templates/emails/invite-to-sign-hse-handbook.template.html'), 'utf8'));
-      await this.emailService.send({
-        from: 'noreply@nsystem.no',
-        to: [...grouped[version], 't.danyliuk@relevant.software'],
-        html: template({
-          company_name: user.company.name,
-          handbook_version: version
-        }),
-        subject: `Please read & sign ${user.company.name} HSE handbook`,
-      });
+      for(const entity of grouped[version]) {
+        await this.emailService.send({
+          from: 'noreply@nsystem.no',
+          to: entity.user.email,
+          html: template({
+            company_name: entity.user.company.name,
+            handbook_version: version,
+            link: `${this.configService.get('APP_DOMAIN')}/${entity.user.company.slug}/hse-handbook-signing/${entity.uuid}`
+          }),
+          subject: `Please read & sign ${user.company.name} HSE handbook`,
+        });
+      }
     }
 
     return {
