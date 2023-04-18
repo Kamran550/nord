@@ -50,7 +50,7 @@ export class HseHandbookSignaturesService {
   ) {
     const signatureRecord = await this.hseHandbookSignaturesRepository.findOne({
       where: { uuid: id },
-      relations: ['hseHandbook']
+      relations: ['handbook']
     });
     // TODO add proper error response
     if (!signatureRecord || signatureRecord.status === HseHandbookSignatureStatus.Signed) return;

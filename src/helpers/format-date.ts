@@ -1,4 +1,6 @@
 export const format = (date: Date) => {
+  if (!date) return '';
+
   const target = new Date(date);
   const day = `0${target.getDate()}`.slice(-2);
   const month = `0${target.getMonth() + 1}`.slice(-2);
@@ -8,6 +10,8 @@ export const format = (date: Date) => {
 };
 
 export const formatWithTime = (date: Date) => {
+  if (!date) return '';
+
   const target = new Date(date);
   const day = `0${target.getDate()}`.slice(-2);
   const month = `${target.getMonth() + 1}`.slice(-2);

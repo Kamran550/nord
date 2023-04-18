@@ -324,11 +324,10 @@ export class HseHandbookService {
       isHseRoutinesVisible: params.isHseRoutinesVisible || !('isHseRoutinesVisible' in params),
       isReadConfirmationsVisible: true,
       showSignatures: true,
-
-      ceoSignature: await this.s3Service.getFile(ceoSignature.signature),
-      ceoSignatureDate: format(ceoSignature.updatedAt) || '-',
-      representativeSignature: await this.s3Service.getFile(representativeSignature.signature),
-      representativeSignatureDate: format(representativeSignature.updatedAt) || '-',
+      ceoSignature: await this.s3Service.getFile(ceoSignature?.signature),
+      ceoSignatureDate: format(ceoSignature?.updatedAt) || '-',
+      representativeSignature: await this.s3Service.getFile(representativeSignature?.signature),
+      representativeSignatureDate: format(representativeSignature?.updatedAt) || '-',
       employeesSignature: employeesSignature,
     };
 
@@ -473,14 +472,16 @@ export class HseHandbookService {
       }
 
       // Save Org Structure
-      const orgStructureEntity = await queryRunner.manager.create(HseHandbookOrgStructure, {
-        companyUuid: orgStructure.companyUuid,
-        hseHandbookUuid: hseHandbook.uuid,
-        lastRevisedByUuid: orgStructure.lastRevisedByUuid,
-        lastRevisedAt: orgStructure.updatedAt,
-        structure: orgStructure.structure,
-      });
-      await queryRunner.manager.save(orgStructureEntity);
+      if (orgStructure) {
+        const orgStructureEntity = await queryRunner.manager.create(HseHandbookOrgStructure, {
+          companyUuid: orgStructure.companyUuid,
+          hseHandbookUuid: hseHandbook.uuid,
+          lastRevisedByUuid: orgStructure.lastRevisedByUuid,
+          lastRevisedAt: orgStructure.updatedAt,
+          structure: orgStructure.structure,
+        });
+        await queryRunner.manager.save(orgStructureEntity);
+      }
 
       await queryRunner.commitTransaction();
 

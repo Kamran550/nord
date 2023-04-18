@@ -3,7 +3,8 @@ import {
   PutObjectCommand,
   PutObjectCommandInput,
   PutObjectCommandOutput,
-  S3Client
+  S3Client,
+  S3ClientConfig
 } from '@aws-sdk/client-s3';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -17,16 +18,18 @@ export class S3Service {
   private accessKeyId: string;
 
   constructor(private configService: ConfigService) {
+    console.log(this.configService.get('ENV'));
     this.region = configService.get<string>('S3_REGION');
     this.secretAccessKey = configService.get<string>('S3_SECRET_ACCESS_KEY');
     this.accessKeyId = configService.get<string>('S3_ACCESS_KEY_ID');
-    this.s3 = new S3Client({
-      region: this.region,
-      credentials: {
+    const config: S3ClientConfig = { region: this.region, };
+    if (this.configService.get('ENV', 'dev') === 'dev') {
+      config.credentials = {
         secretAccessKey: this.secretAccessKey,
         accessKeyId: this.accessKeyId
-      }
-    });
+      };
+    }
+    this.s3 = new S3Client(config);
   }
 
   async uploadFile(file: Express.Multer.File, key: string) {
@@ -51,6 +54,8 @@ export class S3Service {
   }
 
   async getFile(key: string) {
+    if (!key) return null;
+
     const bucket = this.configService.get<string>('S3_BUCKET');
     const response = await this.s3.send(new GetObjectCommand({
       Bucket: bucket,
