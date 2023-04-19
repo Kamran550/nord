@@ -20,7 +20,11 @@ export const getDataSourceOptions = (configService: ConfigService): DataSourceOp
   migrations: [__dirname + '/migrations/*{.ts,.js}'],
   migrationsRun: configService.get('RUN_MIGRATIONS', 'true') === 'true',
   synchronize: false,
-  logging: false,
+  logging: ['error','warn','log'],
+  maxQueryExecutionTime:1000,
+  extra:{
+    charset:'utf8mb4_unicode_ci'
+  }
 });
 
 const TypeOrmDataSource = new DataSource(getDataSourceOptions(configService));
