@@ -4,19 +4,19 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from 'typeorm';
-import { HseRoutineCategoryTranslation } from './hse-routine-categories-translations.entity';
-import { ApiProperty } from '@nestjs/swagger';
+  UpdateDateColumn,
+} from "typeorm";
+import { HseRoutineCategoryTranslation } from "./hse-routine-categories-translations.entity";
+import { ApiProperty } from "@nestjs/swagger";
 
-@Entity('hse_routine_categories')
+@Entity("hse_routine_categories")
 export class HseRoutineCategory {
   @ApiProperty()
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   uuid: string;
 
   @ApiProperty()
-  @Column()
+  @Column({ unique: true})
   name: string;
 
   @ApiProperty()
@@ -27,6 +27,9 @@ export class HseRoutineCategory {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => HseRoutineCategoryTranslation, entity => entity.hseRoutineCategory)
+  @OneToMany(
+    () => HseRoutineCategoryTranslation,
+    (entity) => entity.hseRoutineCategory
+  )
   translations: HseRoutineCategoryTranslation[];
 }
