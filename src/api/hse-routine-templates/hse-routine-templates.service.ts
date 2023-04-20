@@ -91,7 +91,7 @@ export class HseRoutineTemplatesService {
 
     if (!target) return null;
     await this.assignedHseRoutinesRepository.delete({
-      hseRoutineTemplate: { uuid: id },
+      hseRoutineTemplateUuid: id,
     });
     await this.hseRoutineTemplatesRepository.delete({ uuid: id });
     return { success: true };
