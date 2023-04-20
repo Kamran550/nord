@@ -93,7 +93,7 @@ export class HseRiskTemplatesService {
     if (!target) return null;
 
     await this.assignedHseRiskRepository.delete({
-      hseRiskTemplate: { uuid: id },
+      hseRiskTemplateUuid: id,
     });
     await this.hseRiskTemplatesRepository.delete({ uuid: id });
     return { success: true };
