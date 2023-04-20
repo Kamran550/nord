@@ -9,18 +9,26 @@ import {
   UseGuards,
   Query,
   NotFoundException,
-  ValidationPipe
+  ValidationPipe,
 } from '@nestjs/common';
 import { HseRiskTemplatesService } from './hse-risk-templates.service';
 import { CreateHseRiskTemplateDto } from './dto/create-hse-risk-template.dto';
 import { UpdateHseRiskTemplateDto } from './dto/update-hse-risk-template.dto';
-import { ApiBearerAuth, ApiHeader, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiHeader,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtAuthGuard, JwtSuperAdminAuthGuard } from '../auth/auth.guards';
 import { HseRiskTemplate } from './entities/hse-risk-template.entity';
 import { ApiPaginatedResponse, DeleteResponseDto } from '../../types';
 import UserAndLang from '../../helpers/user-and-lang.decorator';
-import { PaginationParams, ParsePaginationPipe } from '../../helpers/pagination.pipe';
-
+import {
+  PaginationParams,
+  ParsePaginationPipe,
+} from '../../helpers/pagination.pipe';
 
 @ApiTags('HSE Risk Templates')
 @ApiHeader({ name: 'Accept-Language', schema: { default: 'lt' } })
@@ -28,7 +36,9 @@ import { PaginationParams, ParsePaginationPipe } from '../../helpers/pagination.
 @UseGuards(JwtAuthGuard)
 @Controller('hse-risk-templates')
 export class HseRiskTemplatesController {
-  constructor(private readonly hseRiskTemplatesService: HseRiskTemplatesService) {}
+  constructor(
+    private readonly hseRiskTemplatesService: HseRiskTemplatesService
+  ) {}
 
   @Post()
   @UseGuards(JwtSuperAdminAuthGuard)
@@ -37,7 +47,9 @@ export class HseRiskTemplatesController {
     @UserAndLang() { lang },
     @Body() createHseRiskTemplateDto: CreateHseRiskTemplateDto
   ) {
-    return await this.hseRiskTemplatesService.create(createHseRiskTemplateDto, { lang });
+    return await this.hseRiskTemplatesService.create(createHseRiskTemplateDto, {
+      lang,
+    });
   }
 
   @Get()
@@ -52,14 +64,18 @@ export class HseRiskTemplatesController {
   }
 
   @Get(':id')
-  @ApiQuery({ name: 'hasTranslations', required: false, type: 'boolean'})
+  @ApiQuery({ name: 'hasTranslations', required: false, type: 'boolean' })
   @ApiOkResponse({ type: HseRiskTemplate })
   async findOne(
     @UserAndLang() { lang },
     @Param('id') id: string,
-    @Query('hasTranslations', new ValidationPipe({ transform: true})) hasTranslations: boolean
+    @Query('hasTranslations', new ValidationPipe({ transform: true }))
+    hasTranslations: boolean
   ) {
-    const target = await this.hseRiskTemplatesService.findOne(id, { lang, hasTranslations });
+    const target = await this.hseRiskTemplatesService.findOne(id, {
+      lang,
+      hasTranslations,
+    });
     if (!target) throw new NotFoundException();
 
     return target;
@@ -73,7 +89,11 @@ export class HseRiskTemplatesController {
     @Param('id') id: string,
     @Body() updateHseRiskTemplateDto: UpdateHseRiskTemplateDto
   ) {
-    const result = await this.hseRiskTemplatesService.update(id, updateHseRiskTemplateDto, { lang });
+    const result = await this.hseRiskTemplatesService.update(
+      id,
+      updateHseRiskTemplateDto,
+      { lang }
+    );
     if (!result) throw new NotFoundException();
 
     return result;
@@ -85,7 +105,7 @@ export class HseRiskTemplatesController {
   async remove(@Param('id') id: string) {
     const result = await this.hseRiskTemplatesService.remove(id);
     if (!result) throw new NotFoundException();
-
+    
     return result;
   }
 }

@@ -18,7 +18,6 @@ export class S3Service {
   private accessKeyId: string;
 
   constructor(private configService: ConfigService) {
-    console.log(this.configService.get('ENV'));
     this.region = configService.get<string>('S3_REGION');
     this.secretAccessKey = configService.get<string>('S3_SECRET_ACCESS_KEY');
     this.accessKeyId = configService.get<string>('S3_ACCESS_KEY_ID');
