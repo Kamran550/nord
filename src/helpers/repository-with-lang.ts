@@ -28,6 +28,7 @@ const formatLang = (obj: any) => {
   const { translations, ...targetCopy } = obj;
 
   if (translations.length) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { uuid, locale, ...translatableFields } = translations[0];
     Object.keys(translatableFields).forEach(key => {
       if (Array.isArray(translatableFields[key])) {
@@ -197,6 +198,7 @@ export class RepositoryWithLang<T extends { uuid: string }, K> extends Repositor
   }
 
   async findOneWithLang(options: FindOneOptions<T> & FindWithLangOptions): Promise<T | null> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { lang, hasTranslations, filters, ...rest } = options;
     const target = await this.findOne(
       addLangFindOptions(rest, { lang, hasTranslations })

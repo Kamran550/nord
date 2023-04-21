@@ -69,6 +69,18 @@
           {
             "name": "MAILGUN_DOMAIN",
             "value": "mg.nsystem.no"
+          },
+          {
+            "name": "S3_BUCKET",
+            "value": "nord-stage-signatures"
+          },
+          {
+            "name": "S3_REGION",
+            "value": "eu-central-1"
+          },
+          {
+            "name": "APP_DOMAIN",
+            "value": "https://stage.nsystem.no"
           }
         ],
         "logConfiguration": {

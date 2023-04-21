@@ -52,12 +52,27 @@ definitions:
 pipelines:
   pull-requests:
     feature/*:
-      - parallel:
-          - step:
-              <<: *testStep
-          - step:
-              <<: *buildStep
-              name: Build Stage
+      - step:
+          <<: *buildStep
+          name: Build Stage
+      - step:
+          <<: *deployStep
+          name: Deploy Stage
+          trigger: manual
+          deployment: Stage-Deploy
+    feat/*:
+      - step:
+          <<: *buildStep
+          name: Build Stage
+      - step:
+          <<: *deployStep
+          name: Deploy Stage
+          trigger: manual
+          deployment: Stage-Deploy
+    fix/*:
+      - step:
+          <<: *buildStep
+          name: Build Stage
       - step:
           <<: *deployStep
           name: Deploy Stage

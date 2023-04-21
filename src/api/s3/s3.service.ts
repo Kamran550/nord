@@ -43,7 +43,7 @@ export class S3Service {
     try {
       const response: PutObjectCommandOutput = await this.s3.send(new PutObjectCommand(input));
       if (response.$metadata.httpStatusCode === 200) {
-        return `https://${bucket}.s3.${this.region}.amazonaws.com/${key}`;
+        return key;
       }
       throw new Error('Image not saved to s3!');
     } catch (err) {
@@ -60,6 +60,7 @@ export class S3Service {
       Bucket: bucket,
       Key: key
     }));
+    
     const byteArray = await response.Body.transformToByteArray();
     return `data:image/png;base64, ${Buffer.from(byteArray).toString('base64')}`;
   }
