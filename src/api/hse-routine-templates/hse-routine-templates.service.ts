@@ -1,17 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { CreateHseRoutineTemplateDto } from './dto/create-hse-routine-template.dto';
-import { UpdateHseRoutineTemplateDto } from './dto/update-hse-routine-template.dto';
-import { HseRoutineTemplate } from './entities/hse-routine-template.entity';
-import { HseRoutineTemplateTranslation } from './entities/hse-routine-templates-translations.entity';
+import { Injectable } from "@nestjs/common";
+import { DataSource } from "typeorm";
+import { CreateHseRoutineTemplateDto } from "./dto/create-hse-routine-template.dto";
+import { UpdateHseRoutineTemplateDto } from "./dto/update-hse-routine-template.dto";
+import { HseRoutineTemplate } from "./entities/hse-routine-template.entity";
+import { HseRoutineTemplateTranslation } from "./entities/hse-routine-templates-translations.entity";
 import {
   FindWithLangOptions,
   RepositoryWithLang,
-} from '../../helpers/repository-with-lang';
-import { IFindOptions, ILangOptions } from '../../types';
-import { FindManyOptions } from 'typeorm/find-options/FindManyOptions';
-import { AssignedHseRoutine } from '../assigned-hse-routines/entities/assigned-hse-routine.entity';
-import { AssignedHseRoutineTranslation } from '../assigned-hse-routines/entities/assigned-hse-routines-translations.entity';
+} from "../../helpers/repository-with-lang";
+import { IFindOptions, ILangOptions } from "../../types";
+import { FindManyOptions } from "typeorm/find-options/FindManyOptions";
+import { AssignedHseRoutine } from "../assigned-hse-routines/entities/assigned-hse-routine.entity";
+import { AssignedHseRoutineTranslation } from "../assigned-hse-routines/entities/assigned-hse-routines-translations.entity";
 
 @Injectable()
 export class HseRoutineTemplatesService {
@@ -42,7 +42,7 @@ export class HseRoutineTemplatesService {
   ) {
     return this.hseRoutineTemplatesRepository.createWithLang(
       createHseRoutineTemplateDto,
-      { ...options, relationKey: 'hseRoutineTemplate' }
+      { ...options, relationKey: "hseRoutineTemplate" }
     );
   }
 
@@ -51,10 +51,10 @@ export class HseRoutineTemplatesService {
       FindWithLangOptions = {
       lang: options.lang,
       pagination: options.pagination,
-      relations: ['hseRoutineCategory', 'hseRoutineCategory.translations'],
+      relations: ["hseRoutineCategory", "hseRoutineCategory.translations"],
     };
     if (options.search)
-      findOptions.search = { keys: ['name'], value: options.search };
+      findOptions.search = { keys: ["name"], value: options.search };
 
     return this.hseRoutineTemplatesRepository.findAndCountWithLang(findOptions);
   }
@@ -80,7 +80,7 @@ export class HseRoutineTemplatesService {
     return this.hseRoutineTemplatesRepository.updateWithLang(
       target,
       updateHseRoutineTemplateDto,
-      { ...options, relationKey: 'hseRoutineTemplate' }
+      { ...options, relationKey: "hseRoutineTemplate" }
     );
   }
 
@@ -90,9 +90,11 @@ export class HseRoutineTemplatesService {
     });
 
     if (!target) return null;
-    await this.assignedHseRoutinesRepository.delete({
-      hseRoutineTemplateUuid: id,
-    });
+    await this.assignedHseRoutinesRepository.update(
+      { hseRoutineTemplateUuid: id },
+      { hseRoutineTemplateUuid: null }
+    );
+
     await this.hseRoutineTemplatesRepository.delete({ uuid: id });
     return { success: true };
   }
